@@ -23,4 +23,8 @@ public class Combatant {
                 (debt, armySize, dragonCount) -> (int)
                         ((dragonCount * 1000) + ((armySize / debt) * 100)));
     }
+
+    public String getName() {
+        return house.name();
+    }
 }

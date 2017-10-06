@@ -2,21 +2,29 @@ package net.tensory.rxjavatalk.feed;
 
 import android.arch.lifecycle.ViewModel;
 
-import java.util.Arrays;
-import java.util.List;
+import net.tensory.rxjavatalk.models.Battle;
+import net.tensory.rxjavatalk.providers.BattleProvider;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
 public class BattleFeedViewModel extends ViewModel {
 
-    private BehaviorSubject<List<String>> eventFeed = BehaviorSubject.create();
+    private BehaviorSubject<Battle> eventFeed = BehaviorSubject.create();
 
     public BattleFeedViewModel() {
-        eventFeed.onNext(Arrays.asList("this", "is", "an", "example", "of rx!"));
+
+        // Merge example
+        Observable.merge(new BattleProvider().getBattlesFeed(),
+                new BattleProvider().getBattlesFeed(),
+                new BattleProvider().getBattlesFeed())
+                .subscribe(battle -> eventFeed.onNext(
+                        battle
+                ), throwable -> {
+                });
     }
 
-    public Observable<List<String>> getEventFeed() {
+    public Observable<Battle> getEventFeed() {
         return eventFeed;
     }
 
