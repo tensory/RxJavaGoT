@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "net.tensory.rxjavatalk"
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -18,12 +18,6 @@ android {
         }
     }
 
-    // Enable Java 8 features.
-    defaultConfig {
-        jackOptions {
-            enabled true
-        }
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -31,14 +25,26 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    // RxJava
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.5'
+
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    final def SUPPORT_LIBRARY_VERSION = '26.1.0'
+    implementation 'com.android.support:appcompat-v7:' + SUPPORT_LIBRARY_VERSION
+    implementation 'com.android.support:support-v4:' + SUPPORT_LIBRARY_VERSION
+    implementation 'com.android.support:recyclerview-v7:' + SUPPORT_LIBRARY_VERSION
+
+    final def ARCH_VERSION = "1.0.0-alpha9-1"
+    implementation "android.arch.lifecycle:extensions:" + ARCH_VERSION
+    implementation "android.arch.persistence.room:runtime:" + ARCH_VERSION
+    implementation "android.arch.persistence.room:rxjava2:" + ARCH_VERSION
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 
-    // RxJava
-    compile 'io.reactivex.rxjava2:rxjava:2.1.5'
 
 }

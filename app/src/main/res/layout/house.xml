@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minWidth="350dp"
+    android:orientation="vertical">
+
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/house_shield"
+            android:layout_width="160dp"
+            android:layout_height="0dp"
+            android:paddingEnd="32dp"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/house_stark_shield"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/house_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+            app:layout_constraintStart_toEndOf="@id/house_shield"
+            app:layout_constraintTop_toTopOf="@id/house_shield"
+
+            tools:text="House Stark" />
+
+        <TextView
+            android:id="@+id/house_rating_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:paddingEnd="32dp"
+            android:text="Rating:"
+            app:layout_constraintStart_toEndOf="@id/house_shield"
+            app:layout_constraintTop_toBottomOf="@+id/house_name" />
+
+        <TextView
+            android:id="@+id/house_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toEndOf="@id/house_rating_label"
+            app:layout_constraintTop_toBottomOf="@+id/house_name"
+
+            tools:text="78" />
+
+        <TextView
+            android:id="@+id/house_debt_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Debt:"
+            app:layout_constraintStart_toEndOf="@id/house_shield"
+            app:layout_constraintTop_toBottomOf="@+id/house_rating" />
+
+        <TextView
+            android:id="@+id/house_debt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toEndOf="@id/house_rating_label"
+            app:layout_constraintTop_toBottomOf="@+id/house_rating"
+
+            tools:text="-$23,000" />
+
+        <TextView
+            android:id="@+id/house_soldiers_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Soldiers:"
+            app:layout_constraintStart_toEndOf="@id/house_shield"
+            app:layout_constraintTop_toBottomOf="@+id/house_debt" />
+
+        <TextView
+            android:id="@+id/house_soldiers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toEndOf="@id/house_rating_label"
+            app:layout_constraintTop_toBottomOf="@+id/house_debt"
+
+            tools:text="3,400" />
+
+        <TextView
+            android:id="@+id/house_dragons_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Dragons:"
+            app:layout_constraintStart_toEndOf="@id/house_shield"
+            app:layout_constraintTop_toBottomOf="@+id/house_soldiers" />
+
+        <TextView
+            android:id="@+id/house_dragons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toEndOf="@id/house_rating_label"
+            app:layout_constraintTop_toBottomOf="@+id/house_soldiers"
+
+            tools:text="0" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp">
+
+        <ImageButton
+            android:id="@+id/confidence_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_thumb_up_black_24dp" />
+
+        <ImageButton
+            android:id="@+id/confidence_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/ic_thumb_down_black_24dp" />
+    </LinearLayout>
+
+</LinearLayout>
