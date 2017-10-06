@@ -8,6 +8,13 @@ public class Combatant {
     private int armySize;
     private int dragonCount;
 
+    public Combatant(House house, double debt, int armySize, int dragonCount) {
+        this.house = house;
+        this.debt = debt;
+        this.armySize = armySize;
+        this.dragonCount = dragonCount;
+    }
+
     public Observable<Integer> getCreditScore() {
         return Observable.combineLatest(
                 Observable.just(debt),
