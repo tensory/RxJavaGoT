@@ -1,11 +1,14 @@
 package net.tensory.rxjavatalk.providers;
 
+import android.util.Pair;
+
 import net.tensory.rxjavatalk.models.Battle;
 import net.tensory.rxjavatalk.models.Combatant;
 import net.tensory.rxjavatalk.models.House;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -14,7 +17,6 @@ import io.reactivex.Observable;
 
 public class BattleProvider {
 
-    private final Random houseRandom = new Random(House.values().length);
     private final Random debtRandom = new Random(1000000);
     private final Random armySizeRandom = new Random(100000);
     private final Random dragonsRandom = new Random(4);
@@ -33,14 +35,9 @@ public class BattleProvider {
     }
 
     private List<Combatant> getTwoRandomCombatants() {
-        final int firstIndex = houseRandom.nextInt();
-        int secondIndex;
+        final Pair<Integer, Integer> compatants = getCompatants();
 
-        do {
-            secondIndex = houseRandom.nextInt();
-        } while (secondIndex == firstIndex);
-
-        return Stream.of(firstIndex, secondIndex)
+        return Stream.of(compatants.first, compatants.second)
                 .map(enumIndex -> new Combatant(
                         House.values()[enumIndex],
                         debtRandom.nextDouble(),
@@ -49,4 +46,16 @@ public class BattleProvider {
                 ))
                 .collect(Collectors.toList());
     }
+
+    private Pair<Integer, Integer> getCompatants() {
+        final int first = ThreadLocalRandom.current().nextInt(0, House.values().length);
+        int second;
+
+        do {
+            second = ThreadLocalRandom.current().nextInt(0, House.values().length);
+        } while (second == first);
+
+        return new Pair<>(first, second);
+    }
+
 }

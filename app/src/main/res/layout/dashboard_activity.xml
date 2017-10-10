@@ -4,45 +4,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include
+    <FrameLayout
         android:id="@+id/house_stark"
-        layout="@layout/house"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <include
+    <FrameLayout
         android:id="@+id/house_lannister"
-        layout="@layout/house"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         app:layout_constraintStart_toEndOf="@id/house_stark"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <include
+    <FrameLayout
         android:id="@+id/house_targaryn"
-        layout="@layout/house"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/house_stark" />
 
-    <include
+    <FrameLayout
         android:id="@+id/house_night_king"
-        layout="@layout/house"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         app:layout_constraintStart_toEndOf="@id/house_stark"
         app:layout_constraintTop_toBottomOf="@id/house_lannister" />
 
-    <fragment
-        android:id="@+id/event_feed_fragment"
-        class="net.tensory.rxjavatalk.feed.BattleFeedFragment"
+    <FrameLayout
+        android:id="@+id/battle_feed_fragment"
         android:layout_width="0dp"
         android:layout_marginStart="32dp"
         android:layout_height="0dp"

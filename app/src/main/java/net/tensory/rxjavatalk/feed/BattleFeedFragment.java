@@ -15,10 +15,6 @@ import net.tensory.rxjavatalk.R;
 
 import io.reactivex.disposables.Disposable;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class BattleFeedFragment extends Fragment {
 
     private BattleFeedAdapter adapter;
