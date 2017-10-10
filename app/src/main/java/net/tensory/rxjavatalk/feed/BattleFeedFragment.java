@@ -44,7 +44,7 @@ public class BattleFeedFragment extends Fragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        adapter = new BattleFeedAdapter();
+        adapter = new BattleFeedAdapter(getContext());
         recyclerView.setAdapter(adapter);
 
         return view;
@@ -54,7 +54,7 @@ public class BattleFeedFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        disposable = viewModel.getEventFeed().subscribe(strings -> adapter.updateItems(strings));
+        disposable = viewModel.getEventFeed().subscribe(battle -> adapter.update(battle));
     }
 
     @Override

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RxJavaTalk</string>
+    <string name="battle_name_format" formatted="false">%s vs. %s</string>
 </resources>
