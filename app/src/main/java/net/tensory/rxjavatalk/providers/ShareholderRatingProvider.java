@@ -1,45 +1,47 @@
 package net.tensory.rxjavatalk.providers;
 
+import net.tensory.rxjavatalk.models.ShareholderRating;
+
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 
 public class ShareholderRatingProvider {
-    private ShareholderRating shareholderRating;
+    private Ratio ratio;
     private PublishSubject<Double> rating = PublishSubject.create();
 
     public ShareholderRatingProvider() {
-        shareholderRating = new ShareholderRating();
-        rating.onNext(shareholderRating.getPositiveRatio());
+        ratio = new Ratio();
+        rating.onNext(ratio.getRatio());
     }
 
     public void addVote(boolean isPositive) {
-        shareholderRating.addVote(isPositive);
-        this.rating.onNext(shareholderRating.getPositiveRatio());
+        ratio.increment(isPositive);
+        this.rating.onNext(ratio.getRatio());
     }
 
-    public Observable<Double> getPositiveRating() {
-        return rating;
+    public Observable<ShareholderRating> getPositiveRating() {
+        return rating.map(ShareholderRating::new);
     }
 
-    private final class ShareholderRating {
-        private int positive;
-        private int total;
+    private final class Ratio {
+        private int numerator;
+        private int denominator;
 
-        public ShareholderRating() {
-            positive = 0;
-            total = 0;
+        public Ratio() {
+            numerator = 0;
+            denominator = 0;
 
         }
 
-        public void addVote(boolean positive) {
+        public void increment(boolean positive) {
             if (positive) {
-                this.positive += 1;
+                this.numerator += 1;
             }
-            total += 1;
+            denominator += 1;
         }
 
-        public double getPositiveRatio() {
-            return positive / total * 1.0;
+        public double getRatio() {
+            return numerator / denominator * 1.0;
         }
     }
 }

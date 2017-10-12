@@ -1,7 +1,5 @@
 package net.tensory.rxjavatalk.models;
 
-import io.reactivex.Observable;
-
 public class Combatant {
     private House house;
     private double debt;

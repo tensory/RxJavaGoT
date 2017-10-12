@@ -13,14 +13,13 @@ public class HouseAssetProfile {
         this.dragonCount = dragonCount;
     }
 
-    public static Observable<Double> getAssetRating(HouseAssetProfile houseAssets) {
+    public static Observable<HouseAssetRating> getAssetRating(HouseAssetProfile houseAssets) {
         return Observable.zip(
                 Observable.just(houseAssets.getArmySize()),
                 Observable.just(houseAssets.getDragonCount()),
                 (dragons, armySize) ->
                         (dragons * 10000.0) + (0.35 * armySize)
-        )
-                ;
+        ).map(HouseAssetRating::new);
     }
 
     public int getArmySize() {
