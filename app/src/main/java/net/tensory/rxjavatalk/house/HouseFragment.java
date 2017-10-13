@@ -1,5 +1,6 @@
 package net.tensory.rxjavatalk.house;
 
+import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -29,11 +30,18 @@ public class HouseFragment extends Fragment {
     private TextView soldiersView;
     private TextView dragonsView;
 
+    private House house;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        viewModel = ViewModelProviders.of(this).get(HouseViewModel.class);
+        Assert.assertNotNull(getArguments());
+
+        house = (House) getArguments().getSerializable(ARG_HOUSE);
+        Assert.assertNotNull(house);
+
+        viewModel = ViewModelProviders.of(this, new HouseViewModelFactory(house)).get(HouseViewModel.class);
     }
 
     @Override
@@ -54,10 +62,6 @@ public class HouseFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        Assert.assertNotNull(getArguments());
-
-        final House house = (House) getArguments().getSerializable(ARG_HOUSE);
-        Assert.assertNotNull(house);
 
         nameView.setText(house.getHouseName());
         disposable = viewModel.observeRating().subscribe(s -> ratingView.setText(s));
@@ -74,5 +78,19 @@ public class HouseFragment extends Fragment {
         disposable.dispose();
 
         super.onStop();
+    }
+
+    class HouseViewModelFactory implements ViewModelProvider.Factory {
+
+        private final House house;
+
+        HouseViewModelFactory(House house) {
+            this.house = house;
+        }
+
+        @Override
+        public HouseViewModel create(Class modelClass) {
+            return new HouseViewModel(house);
+        }
     }
 }
