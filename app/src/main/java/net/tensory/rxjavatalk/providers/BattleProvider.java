@@ -18,6 +18,8 @@ import io.reactivex.Observable;
 public class BattleProvider {
 
     private final Random debtRandom = new Random(1000000);
+    private final Random armySizeRandom = new Random(100000);
+    private final Random dragonsRandom = new Random(4);
 
     /**
      * Observable emitting a stream of Battle events.
@@ -37,7 +39,9 @@ public class BattleProvider {
         return Stream.of(compatants.first, compatants.second)
                 .map(enumIndex -> new Combatant(
                         House.values()[enumIndex],
-                        debtRandom.nextDouble()
+                        debtRandom.nextDouble(),
+                        armySizeRandom.nextInt(),
+                        dragonsRandom.nextInt()
                 ))
                 .collect(Collectors.toList());
     }

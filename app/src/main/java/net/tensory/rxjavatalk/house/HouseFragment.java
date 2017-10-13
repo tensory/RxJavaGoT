@@ -61,9 +61,12 @@ public class HouseFragment extends Fragment {
 
         nameView.setText(house.getHouseName());
         disposable = viewModel.observeRating().subscribe(s -> ratingView.setText(s));
-        disposable = viewModel.observeDebt().subscribe(s -> debtView.setText(s));
-        disposable = viewModel.observeSoldiers().subscribe(s -> soldiersView.setText(s));
-        disposable = viewModel.observeDragons().subscribe(s -> dragonsView.setText(s));
+        disposable = viewModel.observeDebt().subscribe(s -> debtView.setText(String.format(
+                getString(R.string.double_format), s)));
+        disposable = viewModel.observeSoldiers().subscribe(s -> soldiersView.setText(String.format(
+                getString(R.string.int_format), s)));
+        disposable = viewModel.observeDragons().subscribe(s -> dragonsView.setText(String.format(
+                getString(R.string.int_format), s)));
     }
 
     @Override
