@@ -8,11 +8,11 @@ import net.tensory.rxjavatalk.providers.BattleProvider;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
-public class BattleFeedViewModel extends ViewModel {
+public class ActivityPresenter extends ViewModel {
 
     private BehaviorSubject<Battle> eventFeed = BehaviorSubject.create();
 
-    public BattleFeedViewModel() {
+    public ActivityPresenter() {
 
         // Merge example
         Observable.merge(new BattleProvider().getBattlesFeed(),

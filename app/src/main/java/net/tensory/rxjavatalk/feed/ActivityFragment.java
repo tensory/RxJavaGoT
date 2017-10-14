@@ -15,17 +15,17 @@ import net.tensory.rxjavatalk.R;
 
 import io.reactivex.disposables.Disposable;
 
-public class BattleFeedFragment extends Fragment {
+public class ActivityFragment extends Fragment {
 
-    private BattleFeedAdapter adapter;
-    private BattleFeedViewModel viewModel;
+    private ActivityAdapter adapter;
+    private ActivityPresenter viewModel;
     private Disposable disposable;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        viewModel = ViewModelProviders.of(this).get(BattleFeedViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(ActivityPresenter.class);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class BattleFeedFragment extends Fragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        adapter = new BattleFeedAdapter(getContext());
+        adapter = new ActivityAdapter(getContext());
         recyclerView.setAdapter(adapter);
 
         return view;

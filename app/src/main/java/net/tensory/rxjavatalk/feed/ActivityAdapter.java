@@ -15,12 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BattleFeedAdapter extends RecyclerView.Adapter<BattleFeedAdapter.ViewHolder> {
+public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHolder> {
 
     private final List<String> items = new ArrayList<>();
     private final Context context;
 
-    public BattleFeedAdapter(Context context) {
+    public ActivityAdapter(Context context) {
         this.context = context;
     }
 
@@ -30,14 +30,14 @@ public class BattleFeedAdapter extends RecyclerView.Adapter<BattleFeedAdapter.Vi
     }
 
     @Override
-    public BattleFeedAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ActivityAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.battle_feed_item, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(BattleFeedAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(ActivityAdapter.ViewHolder holder, int position) {
         holder.textView.setText(items.get(position));
     }
 

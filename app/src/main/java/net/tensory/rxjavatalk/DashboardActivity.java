@@ -6,9 +6,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
-import net.tensory.rxjavatalk.feed.BattleFeedFragment;
-import net.tensory.rxjavatalk.models.House;
+import net.tensory.rxjavatalk.feed.ActivityFragment;
 import net.tensory.rxjavatalk.house.HouseFragment;
+import net.tensory.rxjavatalk.models.House;
 
 public class DashboardActivity extends AppCompatActivity {
 
@@ -24,7 +24,7 @@ public class DashboardActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.house_lannister, createHouseFragment(House.LANNISTER));
         fragmentTransaction.replace(R.id.house_night_king, createHouseFragment(House.NIGHT_KING));
 
-        fragmentTransaction.replace(R.id.battle_feed_fragment, new BattleFeedFragment());
+        fragmentTransaction.replace(R.id.battle_feed_fragment, new ActivityFragment());
 
         fragmentTransaction.commit();
     }

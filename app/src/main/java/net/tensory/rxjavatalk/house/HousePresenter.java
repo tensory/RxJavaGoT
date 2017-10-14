@@ -2,7 +2,6 @@ package net.tensory.rxjavatalk.house;
 
 import android.arch.lifecycle.ViewModel;
 
-import net.tensory.rxjavatalk.models.Battle;
 import net.tensory.rxjavatalk.models.Combatant;
 import net.tensory.rxjavatalk.models.House;
 import net.tensory.rxjavatalk.providers.BattleProvider;
@@ -10,12 +9,10 @@ import net.tensory.rxjavatalk.providers.HouseAssetProfileProvider;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.BehaviorSubject;
-import io.reactivex.subjects.PublishSubject;
 
-public class HouseViewModel extends ViewModel {
+public class HousePresenter extends ViewModel {
 
     private final BehaviorSubject<String> ratingsSubject = BehaviorSubject.create();
     private final BehaviorSubject<Double> debtSubject = BehaviorSubject.create();
@@ -24,7 +21,7 @@ public class HouseViewModel extends ViewModel {
 
     private final Disposable battlesDisposable;
 
-    public HouseViewModel(House house) {
+    public HousePresenter(House house) {
         // Let's DI this provider
         HouseAssetProfileProvider profileProvider = new HouseAssetProfileProvider();
 
