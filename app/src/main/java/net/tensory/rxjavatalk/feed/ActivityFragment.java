@@ -18,14 +18,14 @@ import io.reactivex.disposables.Disposable;
 public class ActivityFragment extends Fragment {
 
     private ActivityAdapter adapter;
-    private ActivityPresenter viewModel;
+    private ActivityPresenter presenter;
     private Disposable disposable;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        viewModel = ViewModelProviders.of(this).get(ActivityPresenter.class);
+        presenter = ViewModelProviders.of(this).get(ActivityPresenter.class);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ActivityFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        disposable = viewModel.getEventFeed().subscribe(battle -> adapter.update(battle));
+        disposable = presenter.getEventFeed().subscribe(battle -> adapter.update(battle));
     }
 
     @Override

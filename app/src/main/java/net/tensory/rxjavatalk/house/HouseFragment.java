@@ -21,7 +21,7 @@ public class HouseFragment extends Fragment {
 
     public static final String ARG_HOUSE = "ARG_HOUSE";
 
-    private HouseViewModel viewModel;
+    private HousePresenter presenter;
     private Disposable disposable;
 
     private TextView nameView;
@@ -41,7 +41,7 @@ public class HouseFragment extends Fragment {
         house = (House) getArguments().getSerializable(ARG_HOUSE);
         Assert.assertNotNull(house);
 
-        viewModel = ViewModelProviders.of(this, new HouseViewModelFactory(house)).get(HouseViewModel.class);
+        presenter = ViewModelProviders.of(this, new HousePresenterFactory(house)).get(HousePresenter.class);
     }
 
     @Override
@@ -64,12 +64,12 @@ public class HouseFragment extends Fragment {
 
 
         nameView.setText(house.getHouseName());
-        disposable = viewModel.observeRating().subscribe(s -> ratingView.setText(s));
-        disposable = viewModel.observeDebt().subscribe(s -> debtView.setText(String.format(
+        disposable = presenter.observeRating().subscribe(s -> ratingView.setText(s));
+        disposable = presenter.observeDebt().subscribe(s -> debtView.setText(String.format(
                 getString(R.string.double_format), s)));
-        disposable = viewModel.observeSoldiers().subscribe(s -> soldiersView.setText(String.format(
+        disposable = presenter.observeSoldiers().subscribe(s -> soldiersView.setText(String.format(
                 getString(R.string.int_format), s)));
-        disposable = viewModel.observeDragons().subscribe(s -> dragonsView.setText(String.format(
+        disposable = presenter.observeDragons().subscribe(s -> dragonsView.setText(String.format(
                 getString(R.string.int_format), s)));
     }
 
@@ -80,17 +80,17 @@ public class HouseFragment extends Fragment {
         super.onStop();
     }
 
-    class HouseViewModelFactory implements ViewModelProvider.Factory {
+    class HousePresenterFactory implements ViewModelProvider.Factory {
 
         private final House house;
 
-        HouseViewModelFactory(House house) {
+        HousePresenterFactory(House house) {
             this.house = house;
         }
 
         @Override
-        public HouseViewModel create(Class modelClass) {
-            return new HouseViewModel(house);
+        public HousePresenter create(Class modelClass) {
+            return new HousePresenter(house);
         }
     }
 }
