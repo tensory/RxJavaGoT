@@ -1,5 +1,8 @@
 package net.tensory.rxjavatalk.injection;
 
+import net.tensory.rxjavatalk.house.HouseFragment;
+import net.tensory.rxjavatalk.providers.HouseAssetProfileProvider;
+
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -8,4 +11,7 @@ import dagger.Component;
 @Component(modules = {AppModule.class})
 public interface AppComponent {
 
+    void inject(HouseFragment fragment);
+
+    HouseAssetProfileProvider providesHouseAssetProfile();
 }
