@@ -1,6 +1,5 @@
 package net.tensory.rxjavatalk.house;
 
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,8 +16,8 @@ import net.tensory.rxjavatalk.R;
 import net.tensory.rxjavatalk.RxGotApplication;
 import net.tensory.rxjavatalk.injection.AppComponent;
 import net.tensory.rxjavatalk.models.House;
-import net.tensory.rxjavatalk.providers.HouseAssetProfileProvider;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
 public class HouseFragment extends Fragment {
@@ -48,8 +47,8 @@ public class HouseFragment extends Fragment {
         house = (House) getArguments().getSerializable(ARG_HOUSE);
         Assert.assertNotNull(house);
 
-        final HousePresenterFactory presenterFactory =
-                new HousePresenterFactory(house, appComponent.providesHouseAssetProfile());
+        final HousePresenter.Factory presenterFactory =
+                new HousePresenter.Factory(house, appComponent);
         presenter = ViewModelProviders.of(this, presenterFactory).get(HousePresenter.class);
     }
 
@@ -75,13 +74,21 @@ public class HouseFragment extends Fragment {
         shieldView.setImageDrawable(presenter.getShield(getContext()));
 
         nameView.setText(house.getHouseName());
-        disposable = presenter.observeRating().subscribe(s -> ratingView.setText(s));
-        disposable = presenter.observeDebt().subscribe(s -> debtView.setText(String.format(
-                getString(R.string.double_format), s)));
-        disposable = presenter.observeSoldiers().subscribe(s -> soldiersView.setText(String.format(
-                getString(R.string.int_format), s)));
-        disposable = presenter.observeDragons().subscribe(s -> dragonsView.setText(String.format(
-                getString(R.string.int_format), s)));
+        disposable = presenter.observeRating()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(s -> ratingView.setText(s));
+        disposable = presenter.observeDebt()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(s -> debtView.setText(String.format(
+                        getString(R.string.double_format), s)));
+        disposable = presenter.observeSoldiers()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(s -> soldiersView.setText(String.format(
+                        getString(R.string.int_format), s)));
+        disposable = presenter.observeDragons()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(s -> dragonsView.setText(String.format(
+                        getString(R.string.int_format), s)));
     }
 
     @Override
@@ -89,21 +96,5 @@ public class HouseFragment extends Fragment {
         disposable.dispose();
 
         super.onStop();
-    }
-
-    class HousePresenterFactory implements ViewModelProvider.Factory {
-
-        private final House house;
-        private final HouseAssetProfileProvider assetProfileProvider;
-
-        HousePresenterFactory(House house, HouseAssetProfileProvider assetProfileProvider) {
-            this.house = house;
-            this.assetProfileProvider = assetProfileProvider;
-        }
-
-        @Override
-        public HousePresenter create(Class modelClass) {
-            return new HousePresenter(house, assetProfileProvider);
-        }
     }
 }

@@ -1,6 +1,7 @@
 package net.tensory.rxjavatalk.injection;
 
 import net.tensory.rxjavatalk.house.HouseFragment;
+import net.tensory.rxjavatalk.providers.BattleProvider;
 import net.tensory.rxjavatalk.providers.HouseAssetProfileProvider;
 
 import javax.inject.Singleton;
@@ -14,4 +15,6 @@ public interface AppComponent {
     void inject(HouseFragment fragment);
 
     HouseAssetProfileProvider providesHouseAssetProfile();
+
+    BattleProvider providesBattles();
 }

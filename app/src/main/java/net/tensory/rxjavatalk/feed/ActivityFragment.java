@@ -12,7 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.tensory.rxjavatalk.R;
+import net.tensory.rxjavatalk.RxGotApplication;
+import net.tensory.rxjavatalk.injection.AppComponent;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
 public class ActivityFragment extends Fragment {
@@ -24,8 +27,11 @@ public class ActivityFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final AppComponent appComponent = ((RxGotApplication) getActivity().getApplication()).getAppComponent();
 
-        presenter = ViewModelProviders.of(this).get(ActivityPresenter.class);
+        final ActivityPresenter.Factory presenterFactory =
+                new ActivityPresenter.Factory(appComponent);
+        presenter = ViewModelProviders.of(this, presenterFactory).get(ActivityPresenter.class);
     }
 
     @Override
@@ -50,7 +56,9 @@ public class ActivityFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        disposable = presenter.getEventFeed().subscribe(battle -> adapter.update(battle));
+        disposable = presenter.getEventFeed()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(battle -> adapter.update(battle));
     }
 
     @Override

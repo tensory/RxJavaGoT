@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import net.tensory.rxjavatalk.R;
 import net.tensory.rxjavatalk.models.Battle;
-import net.tensory.rxjavatalk.models.Combatant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHolder> {
 
-    private final List<String> items = new ArrayList<>();
+    private final List<Battle> items = new ArrayList<>();
     private final Context context;
 
     public ActivityAdapter(Context context) {
@@ -25,8 +24,8 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
     }
 
     public void update(final Battle battle) {
-        items.add(getBattleDescription(battle));
-        notifyDataSetChanged();
+        items.add(0, battle);
+        notifyItemInserted(0);
     }
 
     @Override
@@ -38,7 +37,8 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ActivityAdapter.ViewHolder holder, int position) {
-        holder.textView.setText(items.get(position));
+        final Battle battle = items.get(position);
+        holder.textView.setText(battle.getFront().name() + ":" + getBattleDescription(battle));
     }
 
     @Override
@@ -57,9 +57,9 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
     }
 
     private String getBattleDescription(Battle battle) {
-        List<String> names = battle.getCombatants()
+        List<String> names = battle.getHouseBattleResults()
                 .stream()
-                .map(Combatant::getName)
+                .map(houseBattleResult -> houseBattleResult.getHouse().getHouseName())
                 .collect(Collectors.toList());
         return String.format(context.getResources().getString(R.string.battle_name_format),
                 names.get(0), names.get(1));

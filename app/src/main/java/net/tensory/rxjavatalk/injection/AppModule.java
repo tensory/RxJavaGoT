@@ -3,6 +3,8 @@ package net.tensory.rxjavatalk.injection;
 import android.app.Application;
 import android.content.Context;
 
+import net.tensory.rxjavatalk.data.DragonManager;
+import net.tensory.rxjavatalk.feed.ActivityPresenter;
 import net.tensory.rxjavatalk.providers.BattleProvider;
 import net.tensory.rxjavatalk.providers.CreditRatingProvider;
 import net.tensory.rxjavatalk.providers.HouseAssetProfileProvider;
@@ -28,10 +30,23 @@ public class AppModule {
         return application;
     }
 
+
     @Provides
     @Singleton
-    public BattleProvider provideBattles() {
-        return new BattleProvider();
+    public DragonManager provideDragonManager() {
+        return new DragonManager();
+    }
+
+    @Provides
+    @Singleton
+    public ActivityPresenter provideActivityPresenter(BattleProvider battleProvider) {
+        return new ActivityPresenter(battleProvider);
+    }
+
+    @Provides
+    @Singleton
+    public BattleProvider provideBattles(DragonManager dragonManager) {
+        return new BattleProvider(dragonManager);
     }
 
     @Provides
