@@ -41,6 +41,11 @@ dependencies {
     implementation "android.arch.persistence.room:rxjava2:" + ARCH_VERSION
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    final DAGGER_VERSION = "2.11"
+    compile 'com.google.dagger:dagger:' + DAGGER_VERSION
+    annotationProcessor 'com.google.dagger:dagger-compiler:' + DAGGER_VERSION
+
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
