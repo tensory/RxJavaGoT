@@ -22,6 +22,8 @@ public class BattleProvider {
      * @return hot Observable
      */
     public Observable<Battle> observeBattles() {
-        return northernFrontFeed.observeBattles();
+        return Observable.merge(
+                northernFrontFeed.observeBattles(),
+                southernFrontFeed.observeBattles());
     }
 }
