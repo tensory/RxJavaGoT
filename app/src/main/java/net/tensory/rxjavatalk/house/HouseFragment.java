@@ -111,7 +111,7 @@ public class HouseFragment extends Fragment {
         final int defaultTextColor = getResources().getColor(android.R.color.primary_text_light, null);
 
         final ObjectAnimator animator = ObjectAnimator.ofInt(textView, "textColor", Color.RED, defaultTextColor);
-        animator.setDuration(3000L);
+        animator.setDuration(8000L);
         animator.setEvaluator(new ArgbEvaluator());
         animator.setInterpolator(new AccelerateInterpolator());
         animator.start();

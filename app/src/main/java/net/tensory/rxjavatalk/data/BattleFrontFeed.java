@@ -13,6 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
 
 public class BattleFrontFeed {
 
@@ -21,12 +22,21 @@ public class BattleFrontFeed {
         SOUTHERN
     }
 
-    private final Front front;
     private final DragonManager dragonManager;
 
+    private BehaviorSubject<Battle> battleSubject = BehaviorSubject.create();
+
     public BattleFrontFeed(Front front, DragonManager dragonManager) {
-        this.front = front;
         this.dragonManager = dragonManager;
+
+        Observable<Battle> observable = Observable.interval(10, TimeUnit.SECONDS)
+                .map(timeInterval -> new Battle(front, generateBattleResults()));
+
+        if (front == Front.SOUTHERN) {
+            observable = observable.delay(5, TimeUnit.SECONDS);
+        }
+
+        observable.subscribe(battle -> battleSubject.onNext(battle));
     }
 
     /**
@@ -35,10 +45,7 @@ public class BattleFrontFeed {
      * @return hot Observable
      */
     public Observable<Battle> observeBattles() {
-        return Observable
-                .interval(4, TimeUnit.SECONDS)
-//                .delay(ThreadLocalRandom.current().nextInt(0, 10), TimeUnit.SECONDS)
-                .map(timeInterval -> new Battle(front, generateBattleResults()));
+        return battleSubject;
     }
 
     private List<HouseBattleResult> generateBattleResults() {
