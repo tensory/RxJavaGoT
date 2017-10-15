@@ -27,6 +27,7 @@ import io.reactivex.disposables.Disposable;
 public class HouseFragment extends Fragment {
 
     public static final String ARG_HOUSE = "ARG_HOUSE";
+    private static final long ANIMATION_DURATION = 2000L;
 
     private HousePresenter presenter;
     private Disposable disposable;
@@ -111,7 +112,7 @@ public class HouseFragment extends Fragment {
         final int defaultTextColor = getResources().getColor(android.R.color.primary_text_light, null);
 
         final ObjectAnimator animator = ObjectAnimator.ofInt(textView, "textColor", Color.RED, defaultTextColor);
-        animator.setDuration(8000L);
+        animator.setDuration(ANIMATION_DURATION);
         animator.setEvaluator(new ArgbEvaluator());
         animator.setInterpolator(new AccelerateInterpolator());
         animator.start();
