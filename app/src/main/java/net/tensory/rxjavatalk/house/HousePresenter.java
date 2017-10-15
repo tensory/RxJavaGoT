@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import net.tensory.rxjavatalk.R;
 import net.tensory.rxjavatalk.injection.AppComponent;
@@ -17,6 +16,7 @@ import net.tensory.rxjavatalk.providers.HouseAssetProfileProvider;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -58,22 +58,18 @@ public class HousePresenter extends ViewModel {
                            DebtProvider debtProvider) {
         this.house = house;
         this.assetProfileProvider = assetProfileProvider;
-//
-//        battlesDisposable = battleProvider.observeBattles()
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(battle -> {
-//                            updateFromBattles(house, assetProfileProvider, battle);
-//                        },
-//                        throwable -> {
-//                        }
-//                );
+
+        disposables.add(battleProvider.observeBattles()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(battle -> {
+                            updateFromBattles(house, assetProfileProvider, battle);
+                        },
+                        throwable -> {
+                        }
+                ));
 
         disposables.add(debtProvider.getLatestForHouse(house)
-                // This isn't the neatest possible way to do this,
-                // but it shows how to manipulate the Value<Double> emitted by getLatestForHouse.
-                .doOnNext(v -> Log.i(HousePresenter.class.getName(), "debt update for " + house.getHouseName() + " " +
-                v.getValue()
-                ))
+                .observeOn(AndroidSchedulers.mainThread())
                 .map(Value::getValue)
                 .subscribe(debtSubject::onNext));
     }

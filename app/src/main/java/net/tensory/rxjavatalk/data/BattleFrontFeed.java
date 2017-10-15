@@ -16,6 +16,7 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
 public class BattleFrontFeed {
+    private static final int EMIT_RATE_SECONDS = 10;
 
     public enum Front {
         NORTHERN,
