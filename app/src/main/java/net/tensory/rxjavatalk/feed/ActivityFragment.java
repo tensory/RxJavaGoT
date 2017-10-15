@@ -23,6 +23,7 @@ public class ActivityFragment extends Fragment {
     private ActivityAdapter adapter;
     private ActivityPresenter presenter;
     private Disposable disposable;
+    private RecyclerView recyclerView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,7 +39,7 @@ public class ActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.battle_feed_fragment, container, false);
-        RecyclerView recyclerView = view.findViewById(R.id.event_feed_recycler_view);
+        recyclerView = view.findViewById(R.id.event_feed_recycler_view);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -58,7 +59,10 @@ public class ActivityFragment extends Fragment {
 
         disposable = presenter.getEventFeed()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(battle -> adapter.update(battle));
+                .subscribe(battle -> {
+                    adapter.update(battle);
+                    recyclerView.scrollToPosition(0);
+                });
     }
 
     @Override
