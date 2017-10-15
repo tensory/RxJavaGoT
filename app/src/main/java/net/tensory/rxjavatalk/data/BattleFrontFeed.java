@@ -42,12 +42,12 @@ public class BattleFrontFeed {
     }
 
     private List<HouseBattleResult> generateBattleResults() {
-        final Pair<Integer, Integer> compatants = getCompatants();
+        final Pair<Integer, Integer> combatants = getCombatants();
 
-        House winningHouse = House.values()[compatants.first];
-        House losingHouse = House.values()[compatants.second];
+        House winningHouse = House.values()[combatants.first];
+        House losingHouse = House.values()[combatants.second];
 
-        dragonManager.considerAllegienceChange(winningHouse, losingHouse);
+        dragonManager.considerAllegianceChange(winningHouse, losingHouse);
 
         return Arrays.asList(
                 generateHouseBattleResult(winningHouse),
@@ -66,7 +66,7 @@ public class BattleFrontFeed {
         return ThreadLocalRandom.current().nextInt(2000, 200000);
     }
 
-    private Pair<Integer, Integer> getCompatants() {
+    private Pair<Integer, Integer> getCombatants() {
         final int first = ThreadLocalRandom.current().nextInt(0, House.values().length);
         int second;
 
