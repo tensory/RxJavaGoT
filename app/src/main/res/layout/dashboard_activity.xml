@@ -8,7 +8,10 @@
         android:id="@+id/house_stark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="48dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -16,7 +19,10 @@
         android:id="@+id/house_lannister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="48dp"
         app:layout_constraintStart_toEndOf="@id/house_stark"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,7 +30,10 @@
         android:id="@+id/house_targaryn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="48dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/house_stark" />
 
@@ -32,15 +41,18 @@
         android:id="@+id/house_night_king"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="48dp"
         app:layout_constraintStart_toEndOf="@id/house_stark"
         app:layout_constraintTop_toBottomOf="@id/house_lannister" />
 
     <FrameLayout
         android:id="@+id/battle_feed_fragment"
         android:layout_width="0dp"
-        android:layout_marginStart="32dp"
         android:layout_height="0dp"
+        android:layout_marginStart="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/house_lannister"

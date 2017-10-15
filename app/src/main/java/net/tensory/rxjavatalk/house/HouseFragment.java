@@ -1,12 +1,16 @@
 package net.tensory.rxjavatalk.house;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.arch.lifecycle.ViewModelProviders;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -76,19 +80,41 @@ public class HouseFragment extends Fragment {
         nameView.setText(house.getHouseName());
         disposable = presenter.observeRating()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> ratingView.setText(s));
+                .subscribe(s -> {
+                    ratingView.setText(s);
+                    animateTextChange(ratingView);
+                });
         disposable = presenter.observeDebt()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> debtView.setText(String.format(
-                        getString(R.string.double_format), s)));
+                .subscribe(s -> {
+                    debtView.setText(String.format(
+                            getString(R.string.double_format), s));
+                    animateTextChange(debtView);
+                });
         disposable = presenter.observeSoldiers()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> soldiersView.setText(String.format(
-                        getString(R.string.int_format), s)));
+                .subscribe(s -> {
+                    soldiersView.setText(String.format(
+                            getString(R.string.int_format), s));
+                    animateTextChange(soldiersView);
+                });
         disposable = presenter.observeDragons()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> dragonsView.setText(String.format(
-                        getString(R.string.int_format), s)));
+                .subscribe(s -> {
+                    dragonsView.setText(String.format(
+                            getString(R.string.int_format), s));
+                    animateTextChange(dragonsView);
+                });
+    }
+
+    private void animateTextChange(TextView textView) {
+        final int defaultTextColor = getResources().getColor(android.R.color.primary_text_light, null);
+
+        final ObjectAnimator animator = ObjectAnimator.ofInt(textView, "textColor", Color.RED, defaultTextColor);
+        animator.setDuration(3000L);
+        animator.setEvaluator(new ArgbEvaluator());
+        animator.setInterpolator(new AccelerateInterpolator());
+        animator.start();
     }
 
     @Override

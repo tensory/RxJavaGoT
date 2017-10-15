@@ -52,6 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:textSize="20sp"
             app:layout_constraintStart_toEndOf="@id/house_rating_label"
             app:layout_constraintTop_toBottomOf="@+id/house_name"
 
@@ -72,6 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toEndOf="@id/house_rating_label"
+            android:textSize="16sp"
             app:layout_constraintTop_toBottomOf="@+id/house_rating"
 
             tools:text="-$23,000" />
@@ -90,6 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@id/house_rating_label"
             app:layout_constraintTop_toBottomOf="@+id/house_debt"
 
@@ -109,6 +112,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@id/house_rating_label"
             app:layout_constraintTop_toBottomOf="@+id/house_soldiers"
 
