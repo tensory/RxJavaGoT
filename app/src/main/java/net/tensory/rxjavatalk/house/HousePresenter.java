@@ -14,6 +14,7 @@ import net.tensory.rxjavatalk.providers.HouseAssetProfileProvider;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -55,10 +56,7 @@ public class HousePresenter extends ViewModel {
         this.assetProfileProvider = assetProfileProvider;
 
         battlesDisposable = battleProvider.observeBattles()
-                .filter(battle -> battle
-                        .getHouseBattleResults()
-                        .stream().filter(combatant -> house == combatant.getHouse())
-                        .count() > 0)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(battle -> {
                             updateFromBattles(house, assetProfileProvider, battle);
                         },
@@ -70,7 +68,7 @@ public class HousePresenter extends ViewModel {
     private void updateFromBattles(House house, HouseAssetProfileProvider assetProfileProvider, Battle battle) {
         battle.getHouseBattleResults()
                 .stream().
-                filter(combatant -> house == combatant.getHouse())
+                filter(combatant -> house.equals(combatant.getHouse()))
                 .forEach(combatant -> {
                     soldiersSubject.onNext(combatant.getCurrentArmySize());
                     dragonsSubject.onNext(combatant.getCurrentDragonCount());

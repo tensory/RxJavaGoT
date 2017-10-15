@@ -21,7 +21,7 @@ public class DragonManager {
         currentAllegiance.put(Dragon.VISERION, House.TARGARYEN);
     }
 
-    public void considerAllegienceChange(House winningHouse, House losingHouse) {
+    public void considerAllegianceChange(House winningHouse, House losingHouse) {
         if (!currentAllegiance.containsValue(losingHouse)) {
             return;
         }
