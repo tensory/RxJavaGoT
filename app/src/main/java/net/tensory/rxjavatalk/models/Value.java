@@ -1,9 +1,9 @@
 package net.tensory.rxjavatalk.models;
 
-class Value<T> {
+public class Value<T> {
     private T value;
 
-    Value(T value) {
+    public Value(T value) {
         this.value = value;
     }
 

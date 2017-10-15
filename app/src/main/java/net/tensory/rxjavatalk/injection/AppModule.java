@@ -3,6 +3,7 @@ package net.tensory.rxjavatalk.injection;
 import android.app.Application;
 import android.content.Context;
 
+import net.tensory.rxjavatalk.data.DebtFeed;
 import net.tensory.rxjavatalk.data.DragonManager;
 import net.tensory.rxjavatalk.feed.ActivityPresenter;
 import net.tensory.rxjavatalk.providers.BattleProvider;
@@ -37,6 +38,12 @@ public class AppModule {
         return new DragonManager();
     }
 
+    @Provides
+    @Singleton
+    public DebtFeed provideDebtFeed() {
+        return new DebtFeed();
+    }
+    
     @Provides
     @Singleton
     public ActivityPresenter provideActivityPresenter(BattleProvider battleProvider) {
