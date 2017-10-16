@@ -7,8 +7,6 @@ import net.tensory.rxjavatalk.models.Battle;
 import net.tensory.rxjavatalk.models.House;
 import net.tensory.rxjavatalk.models.HouseBattleResult;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -16,7 +14,7 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
 public class BattleFrontFeed {
-    private static final int EMIT_RATE_SECONDS = 10;
+    private static final int EMIT_RATE_SECONDS = 16;
 
     public enum Front {
         NORTHERN,
@@ -31,7 +29,9 @@ public class BattleFrontFeed {
         this.dragonManager = dragonManager;
 
         Observable<Battle> observable = Observable.interval(EMIT_RATE_SECONDS, TimeUnit.SECONDS)
-                .map(timeInterval -> new Battle(front, generateBattleResults()));
+                .map(timeInterval -> {
+                    return new Battle(front, generateBattleResults());
+                });
 
         if (front == Front.SOUTHERN) {
             observable = observable.delay(EMIT_RATE_SECONDS / 2, TimeUnit.SECONDS);
@@ -49,7 +49,7 @@ public class BattleFrontFeed {
         return battleSubject;
     }
 
-    private List<HouseBattleResult> generateBattleResults() {
+    private Pair<HouseBattleResult, HouseBattleResult> generateBattleResults() {
         final Pair<Integer, Integer> combatants = getCombatants();
 
         House winningHouse = House.values()[combatants.first];
@@ -57,7 +57,7 @@ public class BattleFrontFeed {
 
         dragonManager.considerAllegianceChange(winningHouse, losingHouse);
 
-        return Arrays.asList(
+        return new Pair<>(
                 generateHouseBattleResult(winningHouse),
                 generateHouseBattleResult(losingHouse));
     }

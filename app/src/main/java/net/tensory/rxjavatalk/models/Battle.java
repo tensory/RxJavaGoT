@@ -1,33 +1,40 @@
 package net.tensory.rxjavatalk.models;
 
-import net.tensory.rxjavatalk.data.BattleFrontFeed;
+import android.util.Pair;
 
-import java.util.List;
+import net.tensory.rxjavatalk.data.BattleFrontFeed;
 
 public class Battle {
 
     private final BattleFrontFeed.Front front;
-    private List<HouseBattleResult> houseBattleResults;
+    private final HouseBattleResult winner;
+    private final HouseBattleResult loser;
 
-
-    public Battle(BattleFrontFeed.Front front, List<HouseBattleResult> houseBattleResults) {
+    public Battle(BattleFrontFeed.Front front,
+                  Pair<HouseBattleResult, HouseBattleResult> battleResult) {
         this.front = front;
-        this.houseBattleResults = houseBattleResults;
+        this.winner = battleResult.first;
+        this.loser = battleResult.second;
     }
 
     public BattleFrontFeed.Front getFront() {
         return front;
     }
 
-    public List<HouseBattleResult> getHouseBattleResults() {
-        return houseBattleResults;
+    public HouseBattleResult getWinner() {
+        return winner;
+    }
+
+    public HouseBattleResult getLoser() {
+        return loser;
     }
 
     @Override
     public String toString() {
         return "Battle{" +
                 "front=" + front +
-                ", houseBattleResults=" + houseBattleResults +
+                ", winner=" + winner +
+                ", loser=" + loser +
                 '}';
     }
 }

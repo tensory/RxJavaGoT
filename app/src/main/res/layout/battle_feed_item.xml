@@ -1,4 +1,5 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -6,11 +7,75 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/feed_description"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/battle_front"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:textColor="#FFF"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Recycler Item" />
+
+    <TextView
+        android:id="@+id/battle_winner_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:text="Winner:"
+        android:textColor="#FFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/battle_front" />
+
+    <TextView
+        android:id="@+id/battle_winner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:textColor="#FFF"
+        app:layout_constraintStart_toEndOf="@id/battle_winner_label"
+        app:layout_constraintTop_toBottomOf="@id/battle_front"
+        tools:text="Recycler Item" />
+
+    <TextView
+        android:id="@+id/battle_winner_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:paddingBottom="8dp"
+        android:textColor="#FFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/battle_winner_label"
+        tools:text="Recycler Item" />
+
+    <TextView
+        android:id="@+id/battle_loser_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:text="Loser:"
+        android:textColor="#FFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/battle_winner_description" />
+
+    <TextView
+        android:id="@+id/battle_loser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        app:layout_constraintStart_toEndOf="@id/battle_loser_label"
+        app:layout_constraintTop_toBottomOf="@id/battle_winner_description"
+        android:textColor="#FFF"
+        tools:text="Recycler Item" />
+
+    <TextView
+        android:id="@+id/battle_loser_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/battle_loser_label"
         android:fontFamily="monospace"
         android:textColor="#FFF"
         tools:text="Recycler Item" />
 
-</FrameLayout>
+</android.support.constraint.ConstraintLayout>

@@ -9,10 +9,10 @@ import android.widget.TextView;
 
 import net.tensory.rxjavatalk.R;
 import net.tensory.rxjavatalk.models.Battle;
+import net.tensory.rxjavatalk.models.HouseBattleResult;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHolder> {
 
@@ -38,7 +38,16 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
     @Override
     public void onBindViewHolder(ActivityAdapter.ViewHolder holder, int position) {
         final Battle battle = items.get(position);
-        holder.textView.setText(battle.getFront().name() + ":" + getBattleDescription(battle));
+        holder.frontView.setText(battle.getFront().name());
+        holder.winnerView.setText(battle.getWinner().getHouse().getHouseName());
+        holder.winnerDescriptionView.setText(getResultsDescription(battle.getWinner()));
+        holder.loserView.setText(battle.getLoser().getHouse().getHouseName());
+        holder.loserDescriptionView.setText(getResultsDescription(battle.getLoser()));
+    }
+
+    private String getResultsDescription(HouseBattleResult result) {
+        return "Army: " + result.getCurrentArmySize()
+                + " Dragons: " + result.getCurrentDragonCount();
     }
 
     @Override
@@ -48,22 +57,20 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView textView;
+        private TextView frontView;
+        private TextView winnerView;
+        private TextView winnerDescriptionView;
+        private TextView loserView;
+        private TextView loserDescriptionView;
 
         private ViewHolder(View view) {
             super(view);
-            textView = view.findViewById(R.id.feed_description);
+            frontView = view.findViewById(R.id.battle_front);
+            winnerView = view.findViewById(R.id.battle_winner);
+            winnerDescriptionView = view.findViewById(R.id.battle_winner_description);
+            loserView = view.findViewById(R.id.battle_loser);
+            loserDescriptionView = view.findViewById(R.id.battle_loser_description);
         }
     }
-
-    private String getBattleDescription(Battle battle) {
-        List<String> names = battle.getHouseBattleResults()
-                .stream()
-                .map(houseBattleResult -> houseBattleResult.getHouse().getHouseName())
-                .collect(Collectors.toList());
-        return String.format(context.getResources().getString(R.string.battle_name_format),
-                names.get(0), names.get(1));
-    }
-
 }
 

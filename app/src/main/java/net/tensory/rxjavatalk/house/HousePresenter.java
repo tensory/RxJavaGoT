@@ -9,6 +9,7 @@ import net.tensory.rxjavatalk.R;
 import net.tensory.rxjavatalk.injection.AppComponent;
 import net.tensory.rxjavatalk.models.Battle;
 import net.tensory.rxjavatalk.models.House;
+import net.tensory.rxjavatalk.models.HouseBattleResult;
 import net.tensory.rxjavatalk.providers.BattleProvider;
 import net.tensory.rxjavatalk.providers.DebtProvider;
 import net.tensory.rxjavatalk.providers.HouseAssetProfileProvider;
@@ -29,6 +30,8 @@ public class HousePresenter extends ViewModel {
     private final CompositeDisposable compositeDisposable;
 
     private final House house;
+    private final HouseAssetProfileProvider assetProfileProvider;
+
     public static class Factory implements ViewModelProvider.Factory {
 
         private final House house;
@@ -54,39 +57,45 @@ public class HousePresenter extends ViewModel {
                            BattleProvider battleProvider,
                            DebtProvider debtProvider) {
         this.house = house;
+        this.assetProfileProvider = assetProfileProvider;
+
         compositeDisposable = new CompositeDisposable();
 
-        compositeDisposable.add(battleProvider.observeBattles()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(battle -> {
-                            updateFromBattles(house, assetProfileProvider, battle);
-                        },
-                        throwable -> {
-                        }
-                ));
+        compositeDisposable.add(
+                battleProvider.observeBattles()
+                        .subscribe(this::updateFromBattles,
+                                throwable -> {
+                                }
+                        ));
 
-        compositeDisposable.add(debtProvider.observeDebt(house)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(debtSubject::onNext));
+        compositeDisposable.add(
+                debtProvider.getLatestForHouse(house)
+                        .subscribe(debtSubject::onNext));
     }
 
-    private void updateFromBattles(House house, HouseAssetProfileProvider assetProfileProvider, Battle battle) {
-        battle.getHouseBattleResults()
-                .stream().
-                filter(combatant -> house.equals(combatant.getHouse()))
-                .forEach(combatant -> {
-                    soldiersSubject.onNext(combatant.getCurrentArmySize());
+    private void updateFromBattles(Battle battle) {
+        final HouseBattleResult winner = battle.getWinner();
+        final HouseBattleResult loser = battle.getLoser();
 
-                    final int currentDragonCount = combatant.getCurrentDragonCount();
-                    final Integer value = dragonsSubject.getValue();
-                    if (value == null || !value.equals(currentDragonCount)) {
-                        dragonsSubject.onNext(currentDragonCount);
-                    }
+        if (house == winner.getHouse()) {
+            processUpdates(winner);
+        } else if (house == loser.getHouse()) {
+            processUpdates(loser);
+        }
+    }
 
-                    assetProfileProvider.publishHouseAssetProfile(house,
-                            combatant.getCurrentArmySize(),
-                            currentDragonCount);
-                });
+    private void processUpdates(HouseBattleResult battleResult) {
+        soldiersSubject.onNext(battleResult.getCurrentArmySize());
+      
+        int currentDragonCount = combatant.getCurrentDragonCount();
+        Integer value = dragonsSubject.getValue();
+        if (value == null || !value.equals(currentDragonCount)) {
+            dragonsSubject.onNext(currentDragonCount);
+        }
+
+        assetProfileProvider.publishHouseAssetProfile(house,
+                battleResult.getCurrentArmySize(),
+                battleResult.getCurrentDragonCount());
     }
 
     public Observable<String> observeRating() {
