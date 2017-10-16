@@ -15,7 +15,8 @@ import net.tensory.rxjavatalk.providers.DebtProvider;
 import net.tensory.rxjavatalk.providers.HouseAssetProfileProvider;
 
 import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -85,27 +86,32 @@ public class HousePresenter extends ViewModel {
 
     private void processUpdates(HouseBattleResult battleResult) {
         soldiersSubject.onNext(battleResult.getCurrentArmySize());
-        dragonsSubject.onNext(battleResult.getCurrentDragonCount());
+      
+        int currentDragonCount = combatant.getCurrentDragonCount();
+        Integer value = dragonsSubject.getValue();
+        if (value == null || !value.equals(currentDragonCount)) {
+            dragonsSubject.onNext(currentDragonCount);
+        }
 
         assetProfileProvider.publishHouseAssetProfile(house,
                 battleResult.getCurrentArmySize(),
                 battleResult.getCurrentDragonCount());
     }
 
-    public Flowable<String> observeRating() {
-        return ratingsSubject.toFlowable(BackpressureStrategy.LATEST);
+    public Observable<String> observeRating() {
+        return ratingsSubject.toFlowable(BackpressureStrategy.LATEST).toObservable();
     }
 
-    public Flowable<Double> observeDebt() {
-        return debtSubject.toFlowable(BackpressureStrategy.LATEST);
+    public Observable<Double> observeDebt() {
+        return debtSubject.toFlowable(BackpressureStrategy.LATEST).toObservable();
     }
 
-    public Flowable<Integer> observeSoldiers() {
-        return soldiersSubject.toFlowable(BackpressureStrategy.LATEST);
+    public Observable<Integer> observeSoldiers() {
+        return soldiersSubject.toFlowable(BackpressureStrategy.LATEST).toObservable();
     }
 
-    public Flowable<Integer> observeDragons() {
-        return dragonsSubject.toFlowable(BackpressureStrategy.LATEST);
+    public Observable<Integer> observeDragons() {
+        return dragonsSubject.toFlowable(BackpressureStrategy.LATEST).toObservable();
     }
 
     @Override

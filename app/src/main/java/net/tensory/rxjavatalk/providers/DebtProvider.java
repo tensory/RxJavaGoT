@@ -16,7 +16,7 @@ public class DebtProvider {
         this.debtFeed = debtFeed;
     }
 
-    public Observable<Double> getLatestForHouse(House house) {
+    public Observable<Double> observeDebt(House house) {
         switch (house) {
             case LANNISTER:
                 return debtFeed.getLannisterDebt();
