@@ -10,6 +10,8 @@ import net.tensory.rxjavatalk.injection.AppComponent;
 import net.tensory.rxjavatalk.models.Battle;
 import net.tensory.rxjavatalk.models.House;
 import net.tensory.rxjavatalk.models.HouseAssetProfile;
+import net.tensory.rxjavatalk.models.ShareholderRating;
+import net.tensory.rxjavatalk.models.HouseAssetProfile;
 import net.tensory.rxjavatalk.models.HouseBattleResult;
 import net.tensory.rxjavatalk.models.ShareholderRating;
 import net.tensory.rxjavatalk.providers.BattleProvider;
@@ -76,9 +78,6 @@ public class HousePresenter extends ViewModel {
                                 }
                         ));
 
-        compositeDisposable.add(
-                debtProvider.observeDebt(house)
-                        .subscribe(debtSubject::onNext));
         compositeDisposable.add(debtProvider.observeDebt(house)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(debtSubject::onNext));
