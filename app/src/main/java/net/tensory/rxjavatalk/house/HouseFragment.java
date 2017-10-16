@@ -27,7 +27,8 @@ import io.reactivex.disposables.Disposable;
 public class HouseFragment extends Fragment {
 
     public static final String ARG_HOUSE = "ARG_HOUSE";
-    private static final long ANIMATION_DURATION = 2000L;
+
+    private static final long ANIMATION_DURATION = 4000L;
 
     private HousePresenter presenter;
     private Disposable disposable;
