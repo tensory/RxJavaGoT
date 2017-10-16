@@ -80,10 +80,12 @@ public class HousePresenter extends ViewModel {
 
         compositeDisposable.add(debtProvider.observeDebt(house)
                 .observeOn(AndroidSchedulers.mainThread())
+                .defaultIfEmpty(0.0)
                 .subscribe(debtSubject::onNext));
 
         compositeDisposable.add(creditRatingProvider.getCreditRating(
-                debtProvider.observeDebt(house),
+                debtProvider.observeDebt(house)
+                        .defaultIfEmpty(0.0),
                 houseAssetProfileProvider.getHouseAssetProfileStream()
                         .flatMap(HouseAssetProfile::getAssetRating),
                 shareholderRatingSubject
