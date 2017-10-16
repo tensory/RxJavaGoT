@@ -4,8 +4,10 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import net.tensory.rxjavatalk.R;
+import net.tensory.rxjavatalk.data.DragonManager;
 import net.tensory.rxjavatalk.injection.AppComponent;
 import net.tensory.rxjavatalk.models.Battle;
 import net.tensory.rxjavatalk.models.House;
@@ -13,8 +15,7 @@ import net.tensory.rxjavatalk.providers.BattleProvider;
 import net.tensory.rxjavatalk.providers.HouseAssetProfileProvider;
 
 import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -28,7 +29,6 @@ public class HousePresenter extends ViewModel {
     private final Disposable battlesDisposable;
 
     private final House house;
-    private final HouseAssetProfileProvider assetProfileProvider;
 
     public static class Factory implements ViewModelProvider.Factory {
 
@@ -45,24 +45,30 @@ public class HousePresenter extends ViewModel {
             return new HousePresenter(
                     house,
                     appComponent.providesHouseAssetProfile(),
-                    appComponent.providesBattles());
+                    appComponent.providesBattles(),
+                    appComponent.providesDragonManager());
         }
     }
 
     private HousePresenter(House house,
                            HouseAssetProfileProvider assetProfileProvider,
-                           BattleProvider battleProvider) {
+                           BattleProvider battleProvider,
+                           DragonManager dragonManager) {
         this.house = house;
-        this.assetProfileProvider = assetProfileProvider;
 
         battlesDisposable = battleProvider.observeBattles()
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(battle -> {
                             updateFromBattles(house, assetProfileProvider, battle);
                         },
                         throwable -> {
                         }
                 );
+
+        dragonManager.observeDragons(house)
+                .subscribe(t -> {
+                    Log.e(HousePresenter.class.getSimpleName(),"Update dragons for "+house + " to "+ t);
+                    dragonsSubject.onNext(t);
+                });
     }
 
     private void updateFromBattles(House house, HouseAssetProfileProvider assetProfileProvider, Battle battle) {
@@ -71,29 +77,27 @@ public class HousePresenter extends ViewModel {
                 filter(combatant -> house.equals(combatant.getHouse()))
                 .forEach(combatant -> {
                     soldiersSubject.onNext(combatant.getCurrentArmySize());
-                    dragonsSubject.onNext(combatant.getCurrentDragonCount());
 //                    debtSubject.onNext(combatant.getDebt());
 
-                    assetProfileProvider.publishHouseAssetProfile(house,
-                            combatant.getCurrentArmySize(),
-                            combatant.getCurrentDragonCount());
+//                    assetProfileProvider.publishHouseAssetProfile(house,
+//                            combatant.getCurrentArmySize());
                 });
     }
 
-    public Flowable<String> observeRating() {
-        return ratingsSubject.toFlowable(BackpressureStrategy.LATEST);
+    public Observable<String> observeRating() {
+        return ratingsSubject.toFlowable(BackpressureStrategy.LATEST).toObservable();
     }
 
-    public Flowable<Double> observeDebt() {
-        return debtSubject.toFlowable(BackpressureStrategy.LATEST);
+    public Observable<Double> observeDebt() {
+        return debtSubject.toFlowable(BackpressureStrategy.LATEST).toObservable();
     }
 
-    public Flowable<Integer> observeSoldiers() {
-        return soldiersSubject.toFlowable(BackpressureStrategy.LATEST);
+    public Observable<Integer> observeSoldiers() {
+        return soldiersSubject.toFlowable(BackpressureStrategy.LATEST).toObservable();
     }
 
-    public Flowable<Integer> observeDragons() {
-        return dragonsSubject.toFlowable(BackpressureStrategy.LATEST);
+    public Observable<Integer> observeDragons() {
+        return dragonsSubject.toFlowable(BackpressureStrategy.LATEST).toObservable();
     }
 
     @Override

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -46,7 +47,7 @@ public class BattleFrontFeed {
      * @return hot Observable
      */
     public Observable<Battle> observeBattles() {
-        return battleSubject;
+        return battleSubject.toFlowable(BackpressureStrategy.LATEST).toObservable();
     }
 
     private List<HouseBattleResult> generateBattleResults() {
@@ -66,8 +67,7 @@ public class BattleFrontFeed {
     private HouseBattleResult generateHouseBattleResult(House house) {
         return new HouseBattleResult(
                 house,
-                generateArmySize(),
-                dragonManager.getDragonCount(house));
+                generateArmySize());
     }
 
     private int generateArmySize() {
