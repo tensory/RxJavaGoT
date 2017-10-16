@@ -9,7 +9,6 @@ import net.tensory.rxjavatalk.R;
 import net.tensory.rxjavatalk.injection.AppComponent;
 import net.tensory.rxjavatalk.models.Battle;
 import net.tensory.rxjavatalk.models.House;
-import net.tensory.rxjavatalk.models.Value;
 import net.tensory.rxjavatalk.providers.BattleProvider;
 import net.tensory.rxjavatalk.providers.DebtProvider;
 import net.tensory.rxjavatalk.providers.HouseAssetProfileProvider;
@@ -27,11 +26,9 @@ public class HousePresenter extends ViewModel {
     private final BehaviorSubject<Integer> soldiersSubject = BehaviorSubject.create();
     private final BehaviorSubject<Integer> dragonsSubject = BehaviorSubject.create();
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable compositeDisposable;
 
     private final House house;
-    private final HouseAssetProfileProvider assetProfileProvider;
-
     public static class Factory implements ViewModelProvider.Factory {
 
         private final House house;
@@ -57,9 +54,9 @@ public class HousePresenter extends ViewModel {
                            BattleProvider battleProvider,
                            DebtProvider debtProvider) {
         this.house = house;
-        this.assetProfileProvider = assetProfileProvider;
+        compositeDisposable = new CompositeDisposable();
 
-        disposables.add(battleProvider.observeBattles()
+        compositeDisposable.add(battleProvider.observeBattles()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(battle -> {
                             updateFromBattles(house, assetProfileProvider, battle);
@@ -68,9 +65,8 @@ public class HousePresenter extends ViewModel {
                         }
                 ));
 
-        disposables.add(debtProvider.getLatestForHouse(house)
+        compositeDisposable.add(debtProvider.getLatestForHouse(house)
                 .observeOn(AndroidSchedulers.mainThread())
-                .map(Value::getValue)
                 .subscribe(debtSubject::onNext));
     }
 
@@ -107,7 +103,7 @@ public class HousePresenter extends ViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        disposables.dispose();
+        compositeDisposable.dispose();
     }
 
     Drawable getShield(final Context context) {

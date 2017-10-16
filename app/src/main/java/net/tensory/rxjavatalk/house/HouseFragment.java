@@ -32,7 +32,7 @@ public class HouseFragment extends Fragment {
 
     private HousePresenter presenter;
 
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private CompositeDisposable compositeDisposable;
 
     private ImageView shieldView;
     private TextView nameView;
@@ -81,6 +81,8 @@ public class HouseFragment extends Fragment {
         shieldView.setImageDrawable(presenter.getShield(getContext()));
 
         nameView.setText(house.getHouseName());
+
+        compositeDisposable = new CompositeDisposable();
         compositeDisposable.add(presenter.observeRating()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
@@ -95,7 +97,6 @@ public class HouseFragment extends Fragment {
                         value = String.format(Locale.getDefault(),"$%1$,.2f", d);
                     }
                     debtView.setText(value);
-//                    animateTextChange(debtView);
                 }));
         compositeDisposable.add(presenter.observeSoldiers()
                 .observeOn(AndroidSchedulers.mainThread())

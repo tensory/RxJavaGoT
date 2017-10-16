@@ -1,9 +1,7 @@
 package net.tensory.rxjavatalk.providers;
 
 import net.tensory.rxjavatalk.data.DebtFeed;
-import net.tensory.rxjavatalk.models.DebtReport;
 import net.tensory.rxjavatalk.models.House;
-import net.tensory.rxjavatalk.models.Value;
 
 import javax.inject.Inject;
 
@@ -18,16 +16,14 @@ public class DebtProvider {
         this.debtFeed = debtFeed;
     }
 
-    public Observable<Value<Double>> getLatestForHouse(House house) {
+    public Observable<Double> getLatestForHouse(House house) {
         switch (house) {
             case LANNISTER:
-                return debtFeed.getDebtReports().map(DebtReport::getLannisterDebt);
+                return debtFeed.getLannisterDebt();
             case STARK:
-                return debtFeed.getDebtReports().map(DebtReport::getStarkDebt);
+                return debtFeed.getStarkDebt();
             case TARGARYEN:
-                return debtFeed.getDebtReports().map(DebtReport::getTargaryenDebt);
-            case NIGHT_KING:
-                return debtFeed.getDebtReports().map(DebtReport::getNightKingDebt);
+                return debtFeed.getTargaryenDebt();
         }
         return Observable.empty();
     }
