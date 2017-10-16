@@ -16,6 +16,7 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
 public class BattleFrontFeed {
+    private static final int EMIT_RATE_SECONDS = 10;
 
     public enum Front {
         NORTHERN,
@@ -29,11 +30,11 @@ public class BattleFrontFeed {
     public BattleFrontFeed(Front front, DragonManager dragonManager) {
         this.dragonManager = dragonManager;
 
-        Observable<Battle> observable = Observable.interval(10, TimeUnit.SECONDS)
+        Observable<Battle> observable = Observable.interval(EMIT_RATE_SECONDS, TimeUnit.SECONDS)
                 .map(timeInterval -> new Battle(front, generateBattleResults()));
 
         if (front == Front.SOUTHERN) {
-            observable = observable.delay(5, TimeUnit.SECONDS);
+            observable = observable.delay(EMIT_RATE_SECONDS / 2, TimeUnit.SECONDS);
         }
 
         observable.subscribe(battle -> battleSubject.onNext(battle));

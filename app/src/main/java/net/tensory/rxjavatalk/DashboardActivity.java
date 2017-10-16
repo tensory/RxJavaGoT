@@ -20,7 +20,7 @@ public class DashboardActivity extends AppCompatActivity {
         final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
         fragmentTransaction.replace(R.id.house_stark, createHouseFragment(House.STARK));
-        fragmentTransaction.replace(R.id.house_targaryn, createHouseFragment(House.TARGARYEN));
+        fragmentTransaction.replace(R.id.house_targaryen, createHouseFragment(House.TARGARYEN));
         fragmentTransaction.replace(R.id.house_lannister, createHouseFragment(House.LANNISTER));
         fragmentTransaction.replace(R.id.house_night_king, createHouseFragment(House.NIGHT_KING));
 
