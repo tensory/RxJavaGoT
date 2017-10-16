@@ -16,7 +16,6 @@ import net.tensory.rxjavatalk.providers.HouseAssetProfileProvider;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -69,7 +68,7 @@ public class HousePresenter extends ViewModel {
                         ));
 
         compositeDisposable.add(
-                debtProvider.getLatestForHouse(house)
+                debtProvider.observeDebt(house)
                         .subscribe(debtSubject::onNext));
     }
 
@@ -86,8 +85,8 @@ public class HousePresenter extends ViewModel {
 
     private void processUpdates(HouseBattleResult battleResult) {
         soldiersSubject.onNext(battleResult.getCurrentArmySize());
-      
-        int currentDragonCount = combatant.getCurrentDragonCount();
+
+        int currentDragonCount = battleResult.getCurrentDragonCount();
         Integer value = dragonsSubject.getValue();
         if (value == null || !value.equals(currentDragonCount)) {
             dragonsSubject.onNext(currentDragonCount);
