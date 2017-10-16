@@ -10,12 +10,13 @@ import net.tensory.rxjavatalk.injection.AppComponent;
 import net.tensory.rxjavatalk.models.Battle;
 import net.tensory.rxjavatalk.models.House;
 import net.tensory.rxjavatalk.providers.BattleProvider;
+import net.tensory.rxjavatalk.providers.DebtProvider;
 import net.tensory.rxjavatalk.providers.HouseAssetProfileProvider;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.subjects.BehaviorSubject;
 
 public class HousePresenter extends ViewModel {
@@ -25,11 +26,9 @@ public class HousePresenter extends ViewModel {
     private final BehaviorSubject<Integer> soldiersSubject = BehaviorSubject.create();
     private final BehaviorSubject<Integer> dragonsSubject = BehaviorSubject.create();
 
-    private final Disposable battlesDisposable;
+    private final CompositeDisposable compositeDisposable;
 
     private final House house;
-    private final HouseAssetProfileProvider assetProfileProvider;
-
     public static class Factory implements ViewModelProvider.Factory {
 
         private final House house;
@@ -45,24 +44,30 @@ public class HousePresenter extends ViewModel {
             return new HousePresenter(
                     house,
                     appComponent.providesHouseAssetProfile(),
-                    appComponent.providesBattles());
+                    appComponent.providesBattles(),
+                    appComponent.providesDebts());
         }
     }
 
     private HousePresenter(House house,
                            HouseAssetProfileProvider assetProfileProvider,
-                           BattleProvider battleProvider) {
+                           BattleProvider battleProvider,
+                           DebtProvider debtProvider) {
         this.house = house;
-        this.assetProfileProvider = assetProfileProvider;
+        compositeDisposable = new CompositeDisposable();
 
-        battlesDisposable = battleProvider.observeBattles()
+        compositeDisposable.add(battleProvider.observeBattles()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(battle -> {
                             updateFromBattles(house, assetProfileProvider, battle);
                         },
                         throwable -> {
                         }
-                );
+                ));
+
+        compositeDisposable.add(debtProvider.getLatestForHouse(house)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(debtSubject::onNext));
     }
 
     private void updateFromBattles(House house, HouseAssetProfileProvider assetProfileProvider, Battle battle) {
@@ -72,7 +77,6 @@ public class HousePresenter extends ViewModel {
                 .forEach(combatant -> {
                     soldiersSubject.onNext(combatant.getCurrentArmySize());
                     dragonsSubject.onNext(combatant.getCurrentDragonCount());
-//                    debtSubject.onNext(combatant.getDebt());
 
                     assetProfileProvider.publishHouseAssetProfile(house,
                             combatant.getCurrentArmySize(),
@@ -99,7 +103,7 @@ public class HousePresenter extends ViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        battlesDisposable.dispose();
+        compositeDisposable.dispose();
     }
 
     Drawable getShield(final Context context) {

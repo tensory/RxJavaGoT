@@ -21,8 +21,10 @@ import net.tensory.rxjavatalk.RxGotApplication;
 import net.tensory.rxjavatalk.injection.AppComponent;
 import net.tensory.rxjavatalk.models.House;
 
+import java.util.Locale;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 
 public class HouseFragment extends Fragment {
 
@@ -30,7 +32,8 @@ public class HouseFragment extends Fragment {
     private static final long ANIMATION_DURATION = 2000L;
 
     private HousePresenter presenter;
-    private Disposable disposable;
+
+    private CompositeDisposable compositeDisposable;
 
     private ImageView shieldView;
     private TextView nameView;
@@ -79,33 +82,37 @@ public class HouseFragment extends Fragment {
         shieldView.setImageDrawable(presenter.getShield(getContext()));
 
         nameView.setText(house.getHouseName());
-        disposable = presenter.observeRating()
+
+        compositeDisposable = new CompositeDisposable();
+        compositeDisposable.add(presenter.observeRating()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
                     ratingView.setText(s);
                     animateTextChange(ratingView);
-                });
-        disposable = presenter.observeDebt()
+                }));
+        compositeDisposable.add(presenter.observeDebt()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> {
-                    debtView.setText(String.format(
-                            getString(R.string.double_format), s));
-                    animateTextChange(debtView);
-                });
-        disposable = presenter.observeSoldiers()
+                .subscribe(d -> {
+                    String value = getString(R.string.en_dash);
+                    if (d > 0) {
+                        value = String.format(Locale.getDefault(),"$%1$,.2f", d);
+                    }
+                    debtView.setText(value);
+                }));
+        compositeDisposable.add(presenter.observeSoldiers()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
                     soldiersView.setText(String.format(
                             getString(R.string.int_format), s));
                     animateTextChange(soldiersView);
-                });
-        disposable = presenter.observeDragons()
+                }));
+        compositeDisposable.add(presenter.observeDragons()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
                     dragonsView.setText(String.format(
                             getString(R.string.int_format), s));
                     animateTextChange(dragonsView);
-                });
+                }));
     }
 
     private void animateTextChange(TextView textView) {
@@ -120,7 +127,7 @@ public class HouseFragment extends Fragment {
 
     @Override
     public void onStop() {
-        disposable.dispose();
+        compositeDisposable.dispose();
 
         super.onStop();
     }

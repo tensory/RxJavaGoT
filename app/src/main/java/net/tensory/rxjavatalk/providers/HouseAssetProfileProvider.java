@@ -7,10 +7,6 @@ import net.tensory.rxjavatalk.models.HouseAssetProfile;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 
-/**
- * Created by ari on 10/12/17.
- */
-
 public class HouseAssetProfileProvider {
     private final PublishSubject<HouseAssetProfile> houseAssetProfileSubject = PublishSubject.create();
 
