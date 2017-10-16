@@ -86,18 +86,20 @@ public class HouseFragment extends Fragment {
         compositeDisposable = new CompositeDisposable();
         compositeDisposable.add(presenter.observeRating()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> {
-                    ratingView.setText(s);
-                    animateTextChange(ratingView);
+                .subscribe(d -> {
+                    ratingView.setText(String.format(Locale.getDefault(),
+                            "%1$,.2f", d));
+//                    animateTextChange(ratingView);
                 }));
         compositeDisposable.add(presenter.observeDebt()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(d -> {
                     String value = getString(R.string.en_dash);
                     if (d > 0) {
-                        value = String.format(Locale.getDefault(),"$%1$,.2f", d);
+                        value = String.format(Locale.getDefault(), "$%1$,.2f", d);
                     }
                     debtView.setText(value);
+//                    animateTextChange(debtView);
                 }));
         compositeDisposable.add(presenter.observeSoldiers()
                 .observeOn(AndroidSchedulers.mainThread())

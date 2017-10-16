@@ -9,6 +9,7 @@ import io.reactivex.Observable;
 
 public class DebtProvider {
 
+    public static final double MAX_DEBT_GOLD = 1000000;
     private DebtFeed debtFeed;
 
     @Inject

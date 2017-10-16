@@ -8,13 +8,17 @@ import io.reactivex.Observable;
 
 public class CreditRatingProvider {
 
-    public Observable<CreditRating> getCreditRating(Observable<HouseAssetRating> houseAssetRating,
+    public Observable<CreditRating> getCreditRating(Observable<Double> debt,
+                                                    Observable<HouseAssetRating> houseAssetRating,
                                                     Observable<ShareholderRating> shareholderRating) {
         return Observable.combineLatest(
+                debt,
                 houseAssetRating,
                 shareholderRating,
-                (assetProfileRating, shareholders) -> {
-                    return 0.0;
+                (houseDebt, assetProfileRating, shareholders) -> {
+                    double debtRatio = (houseDebt == 0) ? 1 : houseDebt / DebtProvider.MAX_DEBT_GOLD;
+                    return ((debtRatio * assetProfileRating.getValue()) / 10) / DebtProvider.MAX_DEBT_GOLD
+                            + shareholders.getValue();
                 }
         ).map(CreditRating::new);
     }
