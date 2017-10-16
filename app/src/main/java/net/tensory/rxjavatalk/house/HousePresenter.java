@@ -9,22 +9,29 @@ import net.tensory.rxjavatalk.R;
 import net.tensory.rxjavatalk.injection.AppComponent;
 import net.tensory.rxjavatalk.models.Battle;
 import net.tensory.rxjavatalk.models.House;
+import net.tensory.rxjavatalk.models.HouseAssetProfile;
 import net.tensory.rxjavatalk.models.HouseBattleResult;
+import net.tensory.rxjavatalk.models.ShareholderRating;
 import net.tensory.rxjavatalk.providers.BattleProvider;
+import net.tensory.rxjavatalk.providers.CreditRatingProvider;
 import net.tensory.rxjavatalk.providers.DebtProvider;
 import net.tensory.rxjavatalk.providers.HouseAssetProfileProvider;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.subjects.BehaviorSubject;
 
 public class HousePresenter extends ViewModel {
 
-    private final BehaviorSubject<String> ratingsSubject = BehaviorSubject.create();
+    private final BehaviorSubject<Double> ratingsSubject = BehaviorSubject.create();
     private final BehaviorSubject<Double> debtSubject = BehaviorSubject.create();
     private final BehaviorSubject<Integer> soldiersSubject = BehaviorSubject.create();
     private final BehaviorSubject<Integer> dragonsSubject = BehaviorSubject.create();
+    private final BehaviorSubject<ShareholderRating> shareholderRatingSubject =
+            BehaviorSubject.
+                    createDefault(new ShareholderRating(0.0));
 
     private final CompositeDisposable compositeDisposable;
 
@@ -47,17 +54,19 @@ public class HousePresenter extends ViewModel {
                     house,
                     appComponent.providesHouseAssetProfile(),
                     appComponent.providesBattles(),
-                    appComponent.providesDebts());
+                    appComponent.providesDebts(),
+                    appComponent.providesCreditRatings()
+            );
         }
     }
 
     private HousePresenter(House house,
-                           HouseAssetProfileProvider assetProfileProvider,
+                           HouseAssetProfileProvider houseAssetProfileProvider,
                            BattleProvider battleProvider,
-                           DebtProvider debtProvider) {
+                           DebtProvider debtProvider,
+                           CreditRatingProvider creditRatingProvider) {
         this.house = house;
-        this.assetProfileProvider = assetProfileProvider;
-
+        assetProfileProvider = houseAssetProfileProvider;
         compositeDisposable = new CompositeDisposable();
 
         compositeDisposable.add(
@@ -70,6 +79,16 @@ public class HousePresenter extends ViewModel {
         compositeDisposable.add(
                 debtProvider.observeDebt(house)
                         .subscribe(debtSubject::onNext));
+        compositeDisposable.add(debtProvider.observeDebt(house)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(debtSubject::onNext));
+
+        compositeDisposable.add(creditRatingProvider.getCreditRating(
+                debtProvider.observeDebt(house),
+                houseAssetProfileProvider.getHouseAssetProfileStream()
+                        .flatMap(HouseAssetProfile::getAssetRating),
+                shareholderRatingSubject
+        ).subscribe(creditRating -> ratingsSubject.onNext(creditRating.getValue())));
     }
 
     private void updateFromBattles(Battle battle) {
@@ -97,7 +116,7 @@ public class HousePresenter extends ViewModel {
                 battleResult.getCurrentDragonCount());
     }
 
-    public Observable<String> observeRating() {
+    public Observable<Double> observeRating() {
         return ratingsSubject.toFlowable(BackpressureStrategy.LATEST).toObservable();
     }
 

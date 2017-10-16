@@ -1,13 +1,7 @@
 package net.tensory.rxjavatalk.models;
 
-public class CreditRating {
-    private double value;
-
+public class CreditRating extends Value<Double> {
     public CreditRating(double value) {
-        this.value = value;
-    }
-
-    public double getValue() {
-        return value;
+        super(value);
     }
 }

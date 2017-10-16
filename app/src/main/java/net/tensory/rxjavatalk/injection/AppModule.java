@@ -57,7 +57,7 @@ public class AppModule {
     }
 
     @Provides
-    @Singleton
+    // Not a singleton: specific to each house.
     public HouseAssetProfileProvider provideHouseAssetProfiles() {
         return new HouseAssetProfileProvider();
     }
