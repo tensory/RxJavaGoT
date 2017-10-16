@@ -4,8 +4,8 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 
 import net.tensory.rxjavatalk.injection.AppComponent;
-import net.tensory.rxjavatalk.models.Battle;
 import net.tensory.rxjavatalk.providers.BattleProvider;
+import net.tensory.rxjavatalk.providers.DebtProvider;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -23,18 +23,23 @@ public class ActivityPresenter extends ViewModel {
         @Override
         public ActivityPresenter create(Class modelClass) {
             return new ActivityPresenter(
-                    appComponent.providesBattles());
+                    appComponent.providesBattles(), appComponent.providesDebts());
         }
     }
 
-    private BehaviorSubject<Battle> eventFeed = BehaviorSubject.create();
+    private BehaviorSubject<Object> eventFeed = BehaviorSubject.create();
 
-    public ActivityPresenter(BattleProvider battleProvider) {
-        battleProvider.observeBattles()
-                .subscribe(battle -> eventFeed.onNext(battle));
+    public ActivityPresenter(BattleProvider battleProvider, DebtProvider debtProvider) {
+        // Example 1: Only one feed
+//        battleProvider.observeBattles()
+//                .subscribe(battle -> eventFeed.onNext(battle));
+
+        // Example 2: Combine the Battle and Debt feeds
+        Observable.merge(battleProvider.observeBattles(), debtProvider.observeDebt())
+                .subscribe(o -> eventFeed.onNext(o));
     }
 
-    public Observable<Battle> getEventFeed() {
+    Observable<Object> getEventFeed() {
         return eventFeed;
     }
 

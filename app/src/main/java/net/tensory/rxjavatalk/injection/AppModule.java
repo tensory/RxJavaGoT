@@ -8,6 +8,7 @@ import net.tensory.rxjavatalk.data.DragonManager;
 import net.tensory.rxjavatalk.feed.ActivityPresenter;
 import net.tensory.rxjavatalk.providers.BattleProvider;
 import net.tensory.rxjavatalk.providers.CreditRatingProvider;
+import net.tensory.rxjavatalk.providers.DebtProvider;
 import net.tensory.rxjavatalk.providers.HouseAssetProfileProvider;
 import net.tensory.rxjavatalk.providers.ShareholderRatingProvider;
 
@@ -46,8 +47,8 @@ public class AppModule {
     
     @Provides
     @Singleton
-    public ActivityPresenter provideActivityPresenter(BattleProvider battleProvider) {
-        return new ActivityPresenter(battleProvider);
+    public ActivityPresenter provideActivityPresenter(BattleProvider battleProvider, DebtProvider debtProvider) {
+        return new ActivityPresenter(battleProvider, debtProvider);
     }
 
     @Provides

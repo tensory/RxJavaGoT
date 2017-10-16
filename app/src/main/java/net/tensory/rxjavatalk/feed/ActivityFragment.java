@@ -47,7 +47,7 @@ public class ActivityFragment extends Fragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        adapter = new ActivityAdapter(getContext());
+        adapter = new ActivityAdapter();
         recyclerView.setAdapter(adapter);
 
         return view;

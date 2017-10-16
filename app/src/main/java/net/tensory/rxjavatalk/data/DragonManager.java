@@ -17,7 +17,7 @@ public class DragonManager {
             dragonCounts.put(house, 0);
         }
 
-        // Initialize the dragon count to 3 for Targaryn's
+        // Initialize the dragon count to 3 for Targaryen's
         dragonCounts.put(House.TARGARYEN, 3);
     }
 
@@ -32,7 +32,7 @@ public class DragonManager {
                 if (losingHouse == House.TARGARYEN) {
                     final double rollOfTheDice = ThreadLocalRandom.current().nextDouble(0.0, 1.0);
 
-                    // Targaryn's only lose a dragon in extreme odds
+                    // Targaryen's only lose a dragon in extreme odds
                     if (rollOfTheDice > 0.8) {
                         switch (winningHouse) {
                             case STARK:
