@@ -14,7 +14,7 @@ import io.reactivex.subjects.BehaviorSubject;
 
 public class CreditRatingProvider {
 
-    private static final Double MAX_DEBT_GOLD = 1000.0;
+    private static final Double MAX_DEBT_GOLD = 100000.0;
 
     private final BehaviorSubject<ShareholderRating> shareholderRatingSubject =
             BehaviorSubject.createDefault(new ShareholderRating(0.0));
@@ -51,15 +51,19 @@ public class CreditRatingProvider {
         return isWinningHouse ? battle.getWinner() : battle.getLoser();
     }
 
-    private Double calculateCreditRating(double houseDebt, double assetRating, ShareholderRating shareholders) {
-        double debtRatio = (houseDebt == 0) ? 1 : houseDebt / MAX_DEBT_GOLD;
-
-        final double liabilitiesRating = ((debtRatio * assetRating) / 10) / MAX_DEBT_GOLD;
-
-        return liabilitiesRating + shareholders.getValue();
-    }
-
     private Double calculateAssetRating(HouseBattleResult houseAssets) {
         return houseAssets.getCurrentArmySize() * 0.35 + houseAssets.getCurrentDragonCount() * 10000;
+    }
+
+    private Double calculateCreditRating(double houseDebt, double assetRating, ShareholderRating shareholders) {
+        double debtRatio = Math.abs((MAX_DEBT_GOLD - houseDebt) / MAX_DEBT_GOLD);
+
+        if (houseDebt == 0.0) {
+            debtRatio = 0.5;
+        }
+
+        final double liabilitiesRating = (debtRatio * assetRating) / MAX_DEBT_GOLD;
+
+        return liabilitiesRating * 10 + shareholders.getValue();
     }
 }

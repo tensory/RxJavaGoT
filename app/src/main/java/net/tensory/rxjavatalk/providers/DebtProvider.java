@@ -27,7 +27,7 @@ public class DebtProvider {
             case TARGARYEN:
                 return debtFeed.observeTargaryenDebt();
         }
-        return Observable.empty();
+        return Observable.just(0.0);
     }
 
     public Observable<Pair<House, Double>> observeDebt() {
@@ -36,7 +36,7 @@ public class DebtProvider {
                         .map(debtValue -> new Pair<>(House.LANNISTER, debtValue)),
                 observeDebt(House.STARK)
                         .map(debtValue -> new Pair<>(House.STARK, debtValue)),
-                observeDebt(House.LANNISTER)
+                observeDebt(House.TARGARYEN)
                         .map(debtValue -> new Pair<>(House.TARGARYEN, debtValue)));
     }
 }
