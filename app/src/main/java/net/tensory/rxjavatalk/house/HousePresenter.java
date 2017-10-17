@@ -29,7 +29,7 @@ public class HousePresenter extends ViewModel {
 
     private final BehaviorSubject<Integer> dragonsSubject = BehaviorSubject.create();
 
-    private final CompositeDisposable compositeDisposable;
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private final House house;
     private final BattleProvider battleProvider;
@@ -66,8 +66,6 @@ public class HousePresenter extends ViewModel {
         this.debtProvider = debtProvider;
         this.creditRatingProvider = creditRatingProvider;
 
-        compositeDisposable = new CompositeDisposable();
-
         subscribeToBattles();
 
         subscribeToDebtFeed();
@@ -76,12 +74,14 @@ public class HousePresenter extends ViewModel {
     }
 
     private void subscribeToBattles() {
-        compositeDisposable.add(
-                battleProvider.observeBattles()
-                              .filter(battle -> battle.getWinner().getHouse() == house ||
-                                      battle.getLoser().getHouse() == house)
-                              .map(this::getHouseBattleResult)
-                              .subscribe(this::updateFromBattles));
+        compositeDisposable.add(battleProvider.observeBattles()
+                                              .filter(this::wereWeInTheBattle)
+                                              .map(this::getHouseBattleResult)
+                                              .subscribe(this::updateFromBattles));
+    }
+
+    private boolean wereWeInTheBattle(Battle battle) {
+        return battle.getWinner().getHouse() == house || battle.getLoser().getHouse() == house;
     }
 
     private HouseBattleResult getHouseBattleResult(Battle battle) {
@@ -105,9 +105,8 @@ public class HousePresenter extends ViewModel {
     }
 
     private void subscribeToDebtFeed() {
-        compositeDisposable.add(
-                debtProvider.observeDebt(house)
-                            .subscribe(debtSubject::onNext));
+        compositeDisposable.add(debtProvider.observeDebt(house)
+                                            .subscribe(debtSubject::onNext));
     }
 
     private void subscribeToCreditRating() {

@@ -29,4 +29,14 @@ public class DebtProvider {
         }
         return Observable.empty();
     }
+
+    public Observable<Pair<House, Double>> observeDebt() {
+        return Observable.merge(
+                observeDebt(House.LANNISTER)
+                        .map(debtValue -> new Pair<>(House.LANNISTER, debtValue)),
+                observeDebt(House.STARK)
+                        .map(debtValue -> new Pair<>(House.STARK, debtValue)),
+                observeDebt(House.LANNISTER)
+                        .map(debtValue -> new Pair<>(House.TARGARYEN, debtValue)));
+    }
 }

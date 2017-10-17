@@ -14,7 +14,7 @@ import io.reactivex.subjects.BehaviorSubject;
 
 public class CreditRatingProvider {
 
-    private static final Double MAX_DEBT_GOLD = 1000000.0;
+    private static final Double MAX_DEBT_GOLD = 1000.0;
 
     private final BehaviorSubject<ShareholderRating> shareholderRatingSubject =
             BehaviorSubject.createDefault(new ShareholderRating(0.0));
@@ -22,6 +22,14 @@ public class CreditRatingProvider {
     private Map<House, BehaviorSubject<Double>> ratingsSubjects = new HashMap<>();
 
     public CreditRatingProvider(BattleProvider battleProvider, DebtProvider debtProvider) {
+        setupSubscription(battleProvider, debtProvider);
+    }
+
+    public Observable<Double> observeCreditRating(House house) {
+        return ratingsSubjects.get(house).toFlowable(BackpressureStrategy.LATEST).toObservable();
+    }
+
+    private void setupSubscription(BattleProvider battleProvider, DebtProvider debtProvider) {
         for (House house : House.values()) {
             final BehaviorSubject<Double> behaviorSubject = BehaviorSubject.create();
             ratingsSubjects.put(house, behaviorSubject);
@@ -30,7 +38,6 @@ public class CreditRatingProvider {
                     debtProvider.observeDebt(house), observeAssetRating(house, battleProvider), shareholderRatingSubject, this::calculateCreditRating)
                       .subscribe(behaviorSubject::onNext);
         }
-
     }
 
     private Observable<Double> observeAssetRating(House house, BattleProvider battleProvider) {
@@ -54,11 +61,5 @@ public class CreditRatingProvider {
 
     private Double calculateAssetRating(HouseBattleResult houseAssets) {
         return houseAssets.getCurrentArmySize() * 0.35 + houseAssets.getCurrentDragonCount() * 10000;
-    }
-
-    public Observable<Double> observeCreditRating(House house) {
-        // Example 1: Empty observable, nothing to emit yet
-//        return Observable.empty();
-        return ratingsSubjects.get(house).toFlowable(BackpressureStrategy.LATEST).toObservable();
     }
 }

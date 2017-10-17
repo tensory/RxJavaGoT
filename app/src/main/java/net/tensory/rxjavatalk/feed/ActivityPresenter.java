@@ -2,19 +2,18 @@ package net.tensory.rxjavatalk.feed;
 
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
-import android.util.Pair;
 
 import net.tensory.rxjavatalk.injection.AppComponent;
-import net.tensory.rxjavatalk.models.House;
 import net.tensory.rxjavatalk.providers.BattleProvider;
 import net.tensory.rxjavatalk.providers.DebtProvider;
 
 import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.BehaviorSubject;
 
 public class ActivityPresenter extends ViewModel {
 
-    private final DebtProvider debtProvider;
+    private final Disposable disposable;
 
     public static class Factory implements ViewModelProvider.Factory {
 
@@ -34,34 +33,18 @@ public class ActivityPresenter extends ViewModel {
     private BehaviorSubject<Object> eventFeed = BehaviorSubject.create();
 
     public ActivityPresenter(BattleProvider battleProvider, DebtProvider debtProvider) {
-        this.debtProvider = debtProvider;
-
-        // Example 1: Only one feed
-//        battleProvider.observeBattles()
-//                .subscribe(battle -> eventFeed.onNext(battle));
-
-        // Example 2: Combine the Battle and Debt feeds
-        Observable.merge(battleProvider.observeBattles(), observeDebt())
-                  .subscribe(event -> eventFeed.onNext(event));
+        disposable = Observable.merge(battleProvider.observeBattles(), debtProvider.observeDebt())
+                               .subscribe(event -> eventFeed.onNext(event));
     }
 
     Observable<Object> getEventFeed() {
         return eventFeed;
     }
 
+    @Override
+    protected void onCleared() {
+        super.onCleared();
 
-    private Observable<Pair<House, Double>> observeDebt() {
-        return Observable.empty();
-//        return Observable.merge(
-//                Observable.just(House.LANNISTER)
-//                .flatMap(house -> debtProvider.observeDebt(house))
-//                .map(debtValue -> new Pair<>(house, debtValue)),
-//                debtProvider.observeDebt(House.LANNISTER)
-//                        .map(debtValue -> new Pair<>(House.LANNISTER, debtValue)),
-//                debtProvider.observeDebt(House.STARK)
-//                        .map(debtValue -> new Pair<>(House.STARK, debtValue)),
-//                debtProvider.observeDebt(House.LANNISTER)
-//                        .map(debtValue -> new Pair<>(House.TARGARYEN, debtValue)));
+        disposable.dispose();
     }
-
 }
