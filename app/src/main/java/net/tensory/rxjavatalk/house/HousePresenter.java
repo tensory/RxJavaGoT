@@ -9,36 +9,32 @@ import net.tensory.rxjavatalk.R;
 import net.tensory.rxjavatalk.injection.AppComponent;
 import net.tensory.rxjavatalk.models.Battle;
 import net.tensory.rxjavatalk.models.House;
-import net.tensory.rxjavatalk.models.HouseAssetProfile;
-import net.tensory.rxjavatalk.models.ShareholderRating;
-import net.tensory.rxjavatalk.models.HouseAssetProfile;
 import net.tensory.rxjavatalk.models.HouseBattleResult;
-import net.tensory.rxjavatalk.models.ShareholderRating;
 import net.tensory.rxjavatalk.providers.BattleProvider;
 import net.tensory.rxjavatalk.providers.CreditRatingProvider;
 import net.tensory.rxjavatalk.providers.DebtProvider;
-import net.tensory.rxjavatalk.providers.HouseAssetProfileProvider;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.subjects.BehaviorSubject;
 
 public class HousePresenter extends ViewModel {
 
     private final BehaviorSubject<Double> ratingsSubject = BehaviorSubject.create();
+
     private final BehaviorSubject<Double> debtSubject = BehaviorSubject.create();
+
     private final BehaviorSubject<Integer> soldiersSubject = BehaviorSubject.create();
+
     private final BehaviorSubject<Integer> dragonsSubject = BehaviorSubject.create();
-    private final BehaviorSubject<ShareholderRating> shareholderRatingSubject =
-            BehaviorSubject.
-                    createDefault(new ShareholderRating(0.0));
 
     private final CompositeDisposable compositeDisposable;
 
     private final House house;
-    private final HouseAssetProfileProvider assetProfileProvider;
+    private final BattleProvider battleProvider;
+    private final DebtProvider debtProvider;
+    private final CreditRatingProvider creditRatingProvider;
 
     public static class Factory implements ViewModelProvider.Factory {
 
@@ -54,7 +50,6 @@ public class HousePresenter extends ViewModel {
         public HousePresenter create(Class modelClass) {
             return new HousePresenter(
                     house,
-                    appComponent.providesHouseAssetProfile(),
                     appComponent.providesBattles(),
                     appComponent.providesDebts(),
                     appComponent.providesCreditRatings()
@@ -63,58 +58,61 @@ public class HousePresenter extends ViewModel {
     }
 
     private HousePresenter(House house,
-                           HouseAssetProfileProvider houseAssetProfileProvider,
                            BattleProvider battleProvider,
                            DebtProvider debtProvider,
                            CreditRatingProvider creditRatingProvider) {
         this.house = house;
-        assetProfileProvider = houseAssetProfileProvider;
+        this.battleProvider = battleProvider;
+        this.debtProvider = debtProvider;
+        this.creditRatingProvider = creditRatingProvider;
+
         compositeDisposable = new CompositeDisposable();
 
+        subscribeToBattles();
+
+        subscribeToDebtFeed();
+
+        subscribeToCreditRating();
+    }
+
+    private void subscribeToBattles() {
         compositeDisposable.add(
                 battleProvider.observeBattles()
-                        .subscribe(this::updateFromBattles,
-                                throwable -> {
-                                }
-                        ));
+                              .filter(battle -> battle.getWinner().getHouse() == house ||
+                                      battle.getLoser().getHouse() == house)
+                              .map(this::getHouseBattleResult)
+                              .subscribe(this::updateFromBattles));
+    }
 
-        compositeDisposable.add(debtProvider.observeDebt(house)
-                .observeOn(AndroidSchedulers.mainThread())
-                .defaultIfEmpty(0.0)
-                .subscribe(debtSubject::onNext));
+    private HouseBattleResult getHouseBattleResult(Battle battle) {
+        boolean isWinningHouse = house.equals(battle.getWinner().getHouse());
+        return isWinningHouse ? battle.getWinner() : battle.getLoser();
+    }
 
-        compositeDisposable.add(creditRatingProvider.getCreditRating(
+    private void updateFromBattles(HouseBattleResult houseBattleResult) {
+        emitOnChange(soldiersSubject, houseBattleResult.getCurrentArmySize());
+
+        emitOnChange(dragonsSubject, houseBattleResult.getCurrentDragonCount());
+    }
+
+    private void emitOnChange(BehaviorSubject<Integer> behaviorSubject, int currentCount) {
+        Integer value = behaviorSubject.getValue();
+        final boolean hasChanged = value == null || !value.equals(currentCount);
+
+        if (hasChanged) {
+            behaviorSubject.onNext(currentCount);
+        }
+    }
+
+    private void subscribeToDebtFeed() {
+        compositeDisposable.add(
                 debtProvider.observeDebt(house)
-                        .defaultIfEmpty(0.0),
-                houseAssetProfileProvider.getHouseAssetProfileStream()
-                        .flatMap(HouseAssetProfile::getAssetRating),
-                shareholderRatingSubject
-        ).subscribe(creditRating -> ratingsSubject.onNext(creditRating.getValue())));
+                            .subscribe(debtSubject::onNext));
     }
 
-    private void updateFromBattles(Battle battle) {
-        final HouseBattleResult winner = battle.getWinner();
-        final HouseBattleResult loser = battle.getLoser();
-
-        if (house == winner.getHouse()) {
-            processUpdates(winner);
-        } else if (house == loser.getHouse()) {
-            processUpdates(loser);
-        }
-    }
-
-    private void processUpdates(HouseBattleResult battleResult) {
-        soldiersSubject.onNext(battleResult.getCurrentArmySize());
-
-        int currentDragonCount = battleResult.getCurrentDragonCount();
-        Integer value = dragonsSubject.getValue();
-        if (value == null || !value.equals(currentDragonCount)) {
-            dragonsSubject.onNext(currentDragonCount);
-        }
-
-        assetProfileProvider.publishHouseAssetProfile(house,
-                battleResult.getCurrentArmySize(),
-                battleResult.getCurrentDragonCount());
+    private void subscribeToCreditRating() {
+        compositeDisposable.add(creditRatingProvider.observeCreditRating(house)
+                                                    .subscribe(ratingsSubject::onNext));
     }
 
     public Observable<Double> observeRating() {

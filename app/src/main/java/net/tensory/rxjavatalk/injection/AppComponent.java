@@ -4,7 +4,6 @@ import net.tensory.rxjavatalk.house.HouseFragment;
 import net.tensory.rxjavatalk.providers.BattleProvider;
 import net.tensory.rxjavatalk.providers.CreditRatingProvider;
 import net.tensory.rxjavatalk.providers.DebtProvider;
-import net.tensory.rxjavatalk.providers.HouseAssetProfileProvider;
 
 import javax.inject.Singleton;
 
@@ -15,8 +14,6 @@ import dagger.Component;
 public interface AppComponent {
 
     void inject(HouseFragment fragment);
-
-    HouseAssetProfileProvider providesHouseAssetProfile();
 
     BattleProvider providesBattles();
 

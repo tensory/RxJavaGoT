@@ -11,7 +11,6 @@ import io.reactivex.Observable;
 
 public class DebtProvider {
 
-    public static final double MAX_DEBT_GOLD = 1000000;
     private DebtFeed debtFeed;
 
     @Inject
@@ -29,15 +28,5 @@ public class DebtProvider {
                 return debtFeed.observeTargaryenDebt();
         }
         return Observable.empty();
-    }
-
-    public Observable<Pair<House, Double>> observeDebt() {
-        return Observable.merge(
-                debtFeed.observeLannisterDebt()
-                        .map(debtValue -> new Pair<>(House.LANNISTER, debtValue)),
-                debtFeed.observeStarkDebt()
-                        .map(debtValue -> new Pair<>(House.STARK, debtValue)),
-                debtFeed.observeTargaryenDebt()
-                        .map(debtValue -> new Pair<>(House.TARGARYEN, debtValue)));
     }
 }

@@ -19,7 +19,7 @@ public class ShareholderRatingProvider {
         this.rating.onNext(ratio.getRatio());
     }
 
-    public Observable<ShareholderRating> getPositiveRating() {
+    public Observable<ShareholderRating> observePositiveRating() {
         return rating.map(ShareholderRating::new);
     }
 

@@ -1,7 +1,5 @@
 package net.tensory.rxjavatalk.data;
 
-import net.tensory.rxjavatalk.providers.DebtProvider;
-
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 

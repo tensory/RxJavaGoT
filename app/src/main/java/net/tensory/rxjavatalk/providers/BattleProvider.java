@@ -3,6 +3,8 @@ package net.tensory.rxjavatalk.providers;
 import net.tensory.rxjavatalk.data.BattleFrontFeed;
 import net.tensory.rxjavatalk.data.DragonManager;
 import net.tensory.rxjavatalk.models.Battle;
+import net.tensory.rxjavatalk.models.House;
+import net.tensory.rxjavatalk.models.HouseBattleResult;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,8 +28,9 @@ public class BattleProvider {
      * @return hot Observable
      */
     public Observable<Battle> observeBattles() {
-        return northernFrontFeed.observeBattles();
+//        return northernFrontFeed.observeBattles();
 
         // Step 2: Merge in the Southern Feed
+        return Observable.merge(northernFrontFeed.observeBattles(), southernFrontFeed.observeBattles());
     }
 }

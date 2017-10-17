@@ -89,7 +89,7 @@ public class HouseFragment extends Fragment {
                 .subscribe(d -> {
                     ratingView.setText(String.format(Locale.getDefault(),
                             "%1$,.2f", d));
-                    animateTextChange(ratingView);
+//                    animateTextChange(ratingView);
                 }));
         compositeDisposable.add(presenter.observeDebt()
                 .observeOn(AndroidSchedulers.mainThread())

@@ -9,7 +9,6 @@ import net.tensory.rxjavatalk.feed.ActivityPresenter;
 import net.tensory.rxjavatalk.providers.BattleProvider;
 import net.tensory.rxjavatalk.providers.CreditRatingProvider;
 import net.tensory.rxjavatalk.providers.DebtProvider;
-import net.tensory.rxjavatalk.providers.HouseAssetProfileProvider;
 import net.tensory.rxjavatalk.providers.ShareholderRatingProvider;
 
 import javax.inject.Singleton;
@@ -44,7 +43,7 @@ public class AppModule {
     public DebtFeed provideDebtFeed() {
         return new DebtFeed();
     }
-    
+
     @Provides
     @Singleton
     public ActivityPresenter provideActivityPresenter(BattleProvider battleProvider, DebtProvider debtProvider) {
@@ -58,15 +57,9 @@ public class AppModule {
     }
 
     @Provides
-    // Not a singleton: specific to each house.
-    public HouseAssetProfileProvider provideHouseAssetProfiles() {
-        return new HouseAssetProfileProvider();
-    }
-
-    @Provides
     @Singleton
-    public CreditRatingProvider provideCreditRatings() {
-        return new CreditRatingProvider();
+    public CreditRatingProvider provideCreditRatings(BattleProvider battleProvider, DebtProvider debtProvider) {
+        return new CreditRatingProvider(battleProvider, debtProvider);
     }
 
     @Provides
