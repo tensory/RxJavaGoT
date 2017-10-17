@@ -29,9 +29,7 @@ public class BattleFrontFeed {
         this.dragonManager = dragonManager;
 
         Observable<Battle> observable = Observable.interval(EMIT_RATE_SECONDS, TimeUnit.SECONDS)
-                .map(timeInterval -> {
-                    return new Battle(front, generateBattleResults());
-                });
+                                                  .map(timeInterval -> new Battle(front, generateBattleResults()));
 
         if (front == Front.SOUTHERN) {
             observable = observable.delay(EMIT_RATE_SECONDS / 2, TimeUnit.SECONDS);
@@ -66,12 +64,16 @@ public class BattleFrontFeed {
     private HouseBattleResult generateHouseBattleResult(House house) {
         return new HouseBattleResult(
                 house,
-                generateArmySize(),
+                generateArmySize(house),
                 dragonManager.getDragonCount(house));
     }
 
-    private int generateArmySize() {
-        return ThreadLocalRandom.current().nextInt(2000, 200000);
+    private int generateArmySize(House house) {
+        int origin = 2000;
+        if (house == House.NIGHT_KING) {
+            origin = 10000;
+        }
+        return ThreadLocalRandom.current().nextInt(origin, 200000);
     }
 
     private Pair<Integer, Integer> getCombatants() {
