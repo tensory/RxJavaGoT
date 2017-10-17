@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RxJavaTalk</string>
+    <string name="app_name">Iron Bank Dashboard</string>
     <string name="battle_name_format" formatted="false">%s vs. %s</string>
     <string name="int_format" formatted="false">%d</string>
     <string name="en_dash">&#8211;</string>
