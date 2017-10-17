@@ -18,7 +18,6 @@ class ActivityPresenter extends ViewModel {
     }
 
     Observable<Object> getEventFeed() {
-        return Observable.merge(battleProvider.observeBattles(), debtProvider.observeDebt());
+        return Observable.never();
     }
-
 }

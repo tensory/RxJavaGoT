@@ -5,9 +5,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 
 import net.tensory.rxjavatalk.R;
-import net.tensory.rxjavatalk.models.Battle;
 import net.tensory.rxjavatalk.models.House;
-import net.tensory.rxjavatalk.models.HouseBattleResult;
 import net.tensory.rxjavatalk.providers.BattleProvider;
 import net.tensory.rxjavatalk.providers.CreditRatingProvider;
 import net.tensory.rxjavatalk.providers.DebtProvider;
@@ -32,33 +30,14 @@ class HousePresenter extends ViewModel {
     }
 
     Observable<Integer> observeSoldiers() {
-        return observeBattleResult()
-                .map(HouseBattleResult::getCurrentArmySize)
-                .distinctUntilChanged();
+        return Observable.never();
     }
 
     Observable<Integer> observeDragons() {
-        return observeBattleResult()
-                .map(HouseBattleResult::getCurrentDragonCount)
-                .distinctUntilChanged();
+        return Observable.never();
     }
 
-    private Observable<HouseBattleResult> observeBattleResult() {
-        return battleProvider.observeBattles()
-                             .filter(this::wereWeInTheBattle)
-                             .map(this::getHouseBattleResult);
-    }
-
-    private boolean wereWeInTheBattle(Battle battle) {
-        return battle.getWinner().getHouse() == house || battle.getLoser().getHouse() == house;
-    }
-
-    private HouseBattleResult getHouseBattleResult(Battle battle) {
-        boolean isWinningHouse = house.equals(battle.getWinner().getHouse());
-        return isWinningHouse ? battle.getWinner() : battle.getLoser();
-    }
-
-    Observable<Double> observeRating() {
+     Observable<Double> observeRating() {
         return creditRatingProvider.observeCreditRating(house);
     }
 
