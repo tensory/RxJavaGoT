@@ -29,7 +29,7 @@ import io.reactivex.disposables.CompositeDisposable;
 public class HouseFragment extends Fragment {
 
     public static final String ARG_HOUSE = "ARG_HOUSE";
-    private static final long ANIMATION_DURATION = 4000L;
+    private static final long ANIMATION_DURATION = 8000L;
 
     private HousePresenter presenter;
 
@@ -89,7 +89,7 @@ public class HouseFragment extends Fragment {
                 .subscribe(d -> {
                     ratingView.setText(String.format(Locale.getDefault(),
                             "%1$,.2f", d));
-//                    animateTextChange(ratingView);
+                    animateTextChange(ratingView);
                 }));
         compositeDisposable.add(presenter.observeDebt()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -99,7 +99,7 @@ public class HouseFragment extends Fragment {
                         value = String.format(Locale.getDefault(), "$%1$,.2f", d);
                     }
                     debtView.setText(value);
-//                    animateTextChange(debtView);
+                    animateTextChange(debtView);
                 }));
         compositeDisposable.add(presenter.observeSoldiers()
                 .observeOn(AndroidSchedulers.mainThread())

@@ -7,21 +7,17 @@ import net.tensory.rxjavatalk.models.Battle;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.subjects.PublishSubject;
 
 public class BattleProvider {
 
-    private PublishSubject<Battle> battlesSubject = PublishSubject.create();
+    private final BattleFrontFeed northernFrontFeed;
+    private final BattleFrontFeed southernFrontFeed;
 
     public BattleProvider(DragonManager dragonManager) {
-        BattleFrontFeed northernFrontFeed = new BattleFrontFeed(BattleFrontFeed.Front.NORTHERN, dragonManager);
-        BattleFrontFeed southernFrontFeed = new BattleFrontFeed(BattleFrontFeed.Front.SOUTHERN, dragonManager);
-        Observable.merge(
-                northernFrontFeed.observeBattles(),
-                southernFrontFeed.observeBattles()
-                        .delay(2, TimeUnit.SECONDS)
-        )
-                .subscribe(battlesSubject::onNext);
+        northernFrontFeed = new BattleFrontFeed(BattleFrontFeed.Front.NORTHERN, dragonManager);
+        southernFrontFeed = new BattleFrontFeed(BattleFrontFeed.Front.SOUTHERN, dragonManager);
     }
 
     /**
@@ -30,6 +26,8 @@ public class BattleProvider {
      * @return hot Observable
      */
     public Observable<Battle> observeBattles() {
-        return battlesSubject;
+        return northernFrontFeed.observeBattles();
+
+        // Step 2: Merge in the Southern Feed
     }
 }
