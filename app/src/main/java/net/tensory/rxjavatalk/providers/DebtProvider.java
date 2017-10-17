@@ -2,8 +2,8 @@ package net.tensory.rxjavatalk.providers;
 
 import android.util.Pair;
 
-import net.tensory.rxjavatalk.data.DebtFeed;
 import net.tensory.rxjavatalk.models.House;
+import net.tensory.rxjavatalk.repositories.DebtFeed;
 
 import javax.inject.Inject;
 

@@ -1,4 +1,4 @@
-package net.tensory.rxjavatalk;
+package net.tensory.rxjavatalk.views;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -6,9 +6,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
-import net.tensory.rxjavatalk.feed.ActivityFragment;
-import net.tensory.rxjavatalk.house.HouseFragment;
+import net.tensory.rxjavatalk.R;
 import net.tensory.rxjavatalk.models.House;
+import net.tensory.rxjavatalk.views.activityfeed.ActivityFragment;
+import net.tensory.rxjavatalk.views.house.HouseFragment;
 
 public class DashboardActivity extends AppCompatActivity {
 

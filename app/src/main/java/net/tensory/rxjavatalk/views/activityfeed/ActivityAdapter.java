@@ -1,4 +1,4 @@
-package net.tensory.rxjavatalk.feed;
+package net.tensory.rxjavatalk.views.activityfeed;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.Pair;

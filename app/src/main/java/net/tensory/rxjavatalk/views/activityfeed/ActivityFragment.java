@@ -1,4 +1,4 @@
-package net.tensory.rxjavatalk.feed;
+package net.tensory.rxjavatalk.views.activityfeed;
 
 
 import android.arch.lifecycle.ViewModelProviders;

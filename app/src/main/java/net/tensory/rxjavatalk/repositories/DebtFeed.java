@@ -1,4 +1,4 @@
-package net.tensory.rxjavatalk.data;
+package net.tensory.rxjavatalk.repositories;
 
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;

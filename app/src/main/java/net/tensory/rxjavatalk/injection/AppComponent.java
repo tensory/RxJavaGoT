@@ -1,9 +1,9 @@
 package net.tensory.rxjavatalk.injection;
 
-import net.tensory.rxjavatalk.house.HouseFragment;
 import net.tensory.rxjavatalk.providers.BattleProvider;
 import net.tensory.rxjavatalk.providers.CreditRatingProvider;
 import net.tensory.rxjavatalk.providers.DebtProvider;
+import net.tensory.rxjavatalk.views.house.HouseFragment;
 
 import javax.inject.Singleton;
 

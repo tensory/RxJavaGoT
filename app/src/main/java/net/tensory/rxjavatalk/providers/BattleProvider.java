@@ -1,16 +1,10 @@
 package net.tensory.rxjavatalk.providers;
 
-import net.tensory.rxjavatalk.data.BattleFrontFeed;
-import net.tensory.rxjavatalk.data.DragonManager;
 import net.tensory.rxjavatalk.models.Battle;
-import net.tensory.rxjavatalk.models.House;
-import net.tensory.rxjavatalk.models.HouseBattleResult;
-
-import java.util.concurrent.TimeUnit;
+import net.tensory.rxjavatalk.repositories.BattleFrontFeed;
+import net.tensory.rxjavatalk.repositories.DragonManager;
 
 import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.subjects.PublishSubject;
 
 public class BattleProvider {
 

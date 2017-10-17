@@ -1,4 +1,4 @@
-package net.tensory.rxjavatalk.house;
+package net.tensory.rxjavatalk.views.house;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;

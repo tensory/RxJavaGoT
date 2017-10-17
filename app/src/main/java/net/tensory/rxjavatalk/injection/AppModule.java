@@ -3,13 +3,13 @@ package net.tensory.rxjavatalk.injection;
 import android.app.Application;
 import android.content.Context;
 
-import net.tensory.rxjavatalk.data.DebtFeed;
-import net.tensory.rxjavatalk.data.DragonManager;
-import net.tensory.rxjavatalk.feed.ActivityPresenter;
 import net.tensory.rxjavatalk.providers.BattleProvider;
 import net.tensory.rxjavatalk.providers.CreditRatingProvider;
 import net.tensory.rxjavatalk.providers.DebtProvider;
 import net.tensory.rxjavatalk.providers.ShareholderRatingProvider;
+import net.tensory.rxjavatalk.repositories.DebtFeed;
+import net.tensory.rxjavatalk.repositories.DragonManager;
+import net.tensory.rxjavatalk.views.activityfeed.ActivityPresenter;
 
 import javax.inject.Singleton;
 

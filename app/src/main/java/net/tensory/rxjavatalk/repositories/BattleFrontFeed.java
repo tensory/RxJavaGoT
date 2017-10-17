@@ -1,4 +1,4 @@
-package net.tensory.rxjavatalk.data;
+package net.tensory.rxjavatalk.repositories;
 
 import android.support.annotation.NonNull;
 import android.util.Pair;

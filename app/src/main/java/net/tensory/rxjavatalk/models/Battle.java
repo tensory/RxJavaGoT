@@ -2,7 +2,7 @@ package net.tensory.rxjavatalk.models;
 
 import android.util.Pair;
 
-import net.tensory.rxjavatalk.data.BattleFrontFeed;
+import net.tensory.rxjavatalk.repositories.BattleFrontFeed;
 
 public class Battle {
 
