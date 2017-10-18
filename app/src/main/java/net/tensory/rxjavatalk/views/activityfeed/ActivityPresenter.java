@@ -6,28 +6,19 @@ import net.tensory.rxjavatalk.providers.BattleProvider;
 import net.tensory.rxjavatalk.providers.DebtProvider;
 
 import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.subjects.BehaviorSubject;
 
-public class ActivityPresenter extends ViewModel {
+class ActivityPresenter extends ViewModel {
 
-    private final Disposable disposable;
+    private final BattleProvider battleProvider;
+    private final DebtProvider debtProvider;
 
-    private BehaviorSubject<Object> eventFeed = BehaviorSubject.create();
-
-    public ActivityPresenter(BattleProvider battleProvider, DebtProvider debtProvider) {
-        disposable = Observable.merge(battleProvider.observeBattles(), debtProvider.observeDebt())
-                               .subscribe(event -> eventFeed.onNext(event));
+    ActivityPresenter(BattleProvider battleProvider, DebtProvider debtProvider) {
+        this.battleProvider = battleProvider;
+        this.debtProvider = debtProvider;
     }
 
     Observable<Object> getEventFeed() {
-        return eventFeed;
+        return Observable.merge(battleProvider.observeBattles(), debtProvider.observeDebt());
     }
 
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-
-        disposable.dispose();
-    }
 }
