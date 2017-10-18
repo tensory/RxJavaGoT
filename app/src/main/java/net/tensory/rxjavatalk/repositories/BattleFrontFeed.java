@@ -28,6 +28,14 @@ public class BattleFrontFeed {
     public BattleFrontFeed(Front front, DragonManager dragonManager) {
         this.dragonManager = dragonManager;
 
+        if (front == Front.SOUTHERN) {
+            Observable.just(new Battle(front, generateBattleResults()))
+                      .delay(EMIT_RATE_SECONDS / 2, TimeUnit.SECONDS)
+                      .subscribe(battle -> battleSubject.onNext(battle));
+        } else {
+            battleSubject.onNext(new Battle(front, generateBattleResults()));
+        }
+
         Observable<Battle> observable = Observable.interval(EMIT_RATE_SECONDS, TimeUnit.SECONDS)
                                                   .map(timeInterval -> new Battle(front, generateBattleResults()));
 
