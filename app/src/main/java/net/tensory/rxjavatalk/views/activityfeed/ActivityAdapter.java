@@ -19,11 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class ActivityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+class ActivityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final List<Object> items = new ArrayList<>();
 
-    public void update(Object item) {
+    void update(Object item) {
         Assert.assertTrue(item instanceof Battle || item instanceof Pair);
 
         items.add(0, item);
@@ -40,11 +40,11 @@ public class ActivityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == 0) {
             final View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.battle_feed_item, parent, false);
+                                            .inflate(R.layout.battle_feed_item, parent, false);
             return new BattleViewHolder(view);
         } else {
             final View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.debt_feed_item, parent, false);
+                                            .inflate(R.layout.debt_feed_item, parent, false);
             return new DebtViewHolder(view);
         }
     }
