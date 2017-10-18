@@ -20,10 +20,10 @@ import io.reactivex.disposables.Disposable;
 
 public class ActivityFragment extends Fragment {
 
-    private ActivityAdapter adapter;
-    private ActivityPresenter presenter;
-    private Disposable disposable;
     private RecyclerView recyclerView;
+    private ActivityAdapter adapter;
+
+    private ActivityPresenter presenter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,22 +53,8 @@ public class ActivityFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        disposable = presenter.getEventFeed()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(battle -> {
-                    adapter.update(battle);
-                    recyclerView.scrollToPosition(0);
-                });
-    }
-
-    @Override
-    public void onStop() {
-        disposable.dispose();
-
-        super.onStop();
+    private void updateActivityFeed(Object activity) {
+        adapter.update(activity);
+        recyclerView.scrollToPosition(0);
     }
 }
