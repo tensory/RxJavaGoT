@@ -3,7 +3,6 @@ package net.tensory.rxjavatalk.providers;
 import net.tensory.rxjavatalk.models.Battle;
 import net.tensory.rxjavatalk.models.House;
 import net.tensory.rxjavatalk.models.HouseBattleResult;
-import net.tensory.rxjavatalk.models.ShareholderRating;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,9 +14,6 @@ import io.reactivex.subjects.BehaviorSubject;
 public class CreditRatingProvider {
 
     private static final Double MAX_DEBT_GOLD = 100000.0;
-
-    private final BehaviorSubject<ShareholderRating> shareholderRatingSubject =
-            BehaviorSubject.createDefault(new ShareholderRating(0.0));
 
     private Map<House, BehaviorSubject<Double>> ratingsSubjects = new HashMap<>();
 
@@ -35,7 +31,7 @@ public class CreditRatingProvider {
             ratingsSubjects.put(house, behaviorSubject);
 
             Observable.combineLatest(
-                    debtProvider.observeDebt(house), observeAssetRating(house, battleProvider), shareholderRatingSubject, this::calculateCreditRating)
+                    debtProvider.observeDebt(house), observeAssetRating(house, battleProvider), this::calculateCreditRating)
                       .subscribe(behaviorSubject::onNext);
         }
     }
@@ -55,7 +51,7 @@ public class CreditRatingProvider {
         return houseAssets.getCurrentArmySize() * 0.35 + houseAssets.getCurrentDragonCount() * 10000;
     }
 
-    private Double calculateCreditRating(double houseDebt, double assetRating, ShareholderRating shareholders) {
+    private Double calculateCreditRating(double houseDebt, double assetRating) {
         double debtRatio = Math.abs((MAX_DEBT_GOLD - houseDebt) / MAX_DEBT_GOLD);
 
         if (houseDebt == 0.0) {
@@ -64,6 +60,6 @@ public class CreditRatingProvider {
 
         final double liabilitiesRating = (debtRatio * assetRating) / MAX_DEBT_GOLD;
 
-        return liabilitiesRating * 10 + shareholders.getValue();
+        return liabilitiesRating * 10;
     }
 }

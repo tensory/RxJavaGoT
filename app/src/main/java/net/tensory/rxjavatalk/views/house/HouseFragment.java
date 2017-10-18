@@ -55,8 +55,8 @@ public class HouseFragment extends Fragment {
         house = (House) getArguments().getSerializable(ARG_HOUSE);
         Assert.assertNotNull(house);
 
-        final HousePresenter.Factory presenterFactory =
-                new HousePresenter.Factory(house, appComponent);
+        final HousePresenterFactory presenterFactory =
+                new HousePresenterFactory(house, appComponent);
         presenter = ViewModelProviders.of(this, presenterFactory).get(HousePresenter.class);
     }
 

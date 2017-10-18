@@ -6,7 +6,6 @@ import android.content.Context;
 import net.tensory.rxjavatalk.providers.BattleProvider;
 import net.tensory.rxjavatalk.providers.CreditRatingProvider;
 import net.tensory.rxjavatalk.providers.DebtProvider;
-import net.tensory.rxjavatalk.providers.ShareholderRatingProvider;
 import net.tensory.rxjavatalk.repositories.DebtFeed;
 import net.tensory.rxjavatalk.repositories.DragonManager;
 import net.tensory.rxjavatalk.views.activityfeed.ActivityPresenter;
@@ -62,9 +61,4 @@ public class AppModule {
         return new CreditRatingProvider(battleProvider, debtProvider);
     }
 
-    @Provides
-    @Singleton
-    public ShareholderRatingProvider provideShareholderRatings() {
-        return new ShareholderRatingProvider();
-    }
 }

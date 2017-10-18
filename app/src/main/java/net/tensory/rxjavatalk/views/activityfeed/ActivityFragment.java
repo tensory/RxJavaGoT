@@ -30,8 +30,8 @@ public class ActivityFragment extends Fragment {
         super.onCreate(savedInstanceState);
         final AppComponent appComponent = ((RxGotApplication) getActivity().getApplication()).getAppComponent();
 
-        final ActivityPresenter.Factory presenterFactory =
-                new ActivityPresenter.Factory(appComponent);
+        final ActivityPresenterFactory presenterFactory =
+                new ActivityPresenterFactory(appComponent);
         presenter = ViewModelProviders.of(this, presenterFactory).get(ActivityPresenter.class);
     }
 

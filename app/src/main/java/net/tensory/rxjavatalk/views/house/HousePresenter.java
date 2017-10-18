@@ -1,12 +1,10 @@
 package net.tensory.rxjavatalk.views.house;
 
 import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 
 import net.tensory.rxjavatalk.R;
-import net.tensory.rxjavatalk.injection.AppComponent;
 import net.tensory.rxjavatalk.models.Battle;
 import net.tensory.rxjavatalk.models.House;
 import net.tensory.rxjavatalk.models.HouseBattleResult;
@@ -21,6 +19,11 @@ import io.reactivex.subjects.BehaviorSubject;
 
 public class HousePresenter extends ViewModel {
 
+    private final House house;
+    private final BattleProvider battleProvider;
+    private final DebtProvider debtProvider;
+    private final CreditRatingProvider creditRatingProvider;
+
     private final BehaviorSubject<Double> ratingsSubject = BehaviorSubject.create();
 
     private final BehaviorSubject<Double> debtSubject = BehaviorSubject.create();
@@ -31,36 +34,10 @@ public class HousePresenter extends ViewModel {
 
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    private final House house;
-    private final BattleProvider battleProvider;
-    private final DebtProvider debtProvider;
-    private final CreditRatingProvider creditRatingProvider;
-
-    public static class Factory implements ViewModelProvider.Factory {
-
-        private final House house;
-        private final AppComponent appComponent;
-
-        public Factory(House house, AppComponent appComponent) {
-            this.house = house;
-            this.appComponent = appComponent;
-        }
-
-        @Override
-        public HousePresenter create(Class modelClass) {
-            return new HousePresenter(
-                    house,
-                    appComponent.providesBattles(),
-                    appComponent.providesDebts(),
-                    appComponent.providesCreditRatings()
-            );
-        }
-    }
-
-    private HousePresenter(House house,
-                           BattleProvider battleProvider,
-                           DebtProvider debtProvider,
-                           CreditRatingProvider creditRatingProvider) {
+    HousePresenter(House house,
+                   BattleProvider battleProvider,
+                   DebtProvider debtProvider,
+                   CreditRatingProvider creditRatingProvider) {
         this.house = house;
         this.battleProvider = battleProvider;
         this.debtProvider = debtProvider;
