@@ -21,7 +21,7 @@ import net.tensory.rxjavatalk.RxGotApplication;
 import net.tensory.rxjavatalk.injection.AppComponent;
 import net.tensory.rxjavatalk.models.House;
 
-import java.util.Locale;
+import java.text.NumberFormat;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -44,6 +44,8 @@ public class HouseFragment extends Fragment {
 
     private House house;
 
+    private NumberFormat doubleFormat = NumberFormat.getNumberInstance();
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +60,9 @@ public class HouseFragment extends Fragment {
         final HousePresenterFactory presenterFactory =
                 new HousePresenterFactory(house, appComponent);
         presenter = ViewModelProviders.of(this, presenterFactory).get(HousePresenter.class);
+
+        doubleFormat.setMaximumFractionDigits(2);
+        doubleFormat.setMinimumFractionDigits(2);
     }
 
     @Override
@@ -84,37 +89,41 @@ public class HouseFragment extends Fragment {
         nameView.setText(house.getHouseName());
 
         compositeDisposable = new CompositeDisposable();
+
         compositeDisposable.add(presenter.observeRating()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(d -> {
-                    ratingView.setText(String.format(Locale.getDefault(),
-                            "%1$,.2f", d));
-//                    animateTextChange(ratingView);
-                }));
+                                         .map(rating -> doubleFormat.format(rating))
+                                         .observeOn(AndroidSchedulers.mainThread())
+                                         .subscribe(displayText -> ratingView.setText(displayText)));
+
         compositeDisposable.add(presenter.observeDebt()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(d -> {
-                    String value = getString(R.string.en_dash);
-                    if (d > 0) {
-                        value = String.format(Locale.getDefault(), "$%1$,.2f", d);
-                    }
-                    debtView.setText(value);
-                    animateTextChange(debtView);
-                }));
+                                         .map(debt -> {
+                                             if (debt > 0) {
+                                                 return doubleFormat.format(debt);
+                                             } else {
+                                                 return getString(R.string.en_dash);
+                                             }
+                                         })
+                                         .observeOn(AndroidSchedulers.mainThread())
+                                         .subscribe(displayText -> {
+                                             debtView.setText(displayText);
+                                             animateTextChange(debtView);
+                                         }));
+
         compositeDisposable.add(presenter.observeSoldiers()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> {
-                    soldiersView.setText(String.format(
-                            getString(R.string.int_format), s));
-                    animateTextChange(soldiersView);
-                }));
+                                         .map(String::valueOf)
+                                         .observeOn(AndroidSchedulers.mainThread())
+                                         .subscribe(displayText -> {
+                                             soldiersView.setText(displayText);
+                                             animateTextChange(soldiersView);
+                                         }));
+
         compositeDisposable.add(presenter.observeDragons()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> {
-                    dragonsView.setText(String.format(
-                            getString(R.string.int_format), s));
-                    animateTextChange(dragonsView);
-                }));
+                                         .map(String::valueOf)
+                                         .observeOn(AndroidSchedulers.mainThread())
+                                         .subscribe(displayText -> {
+                                             dragonsView.setText(displayText);
+                                             animateTextChange(dragonsView);
+                                         }));
     }
 
     private void animateTextChange(TextView textView) {
