@@ -8,7 +8,6 @@ import net.tensory.rxjavatalk.providers.CreditRatingProvider;
 import net.tensory.rxjavatalk.providers.DebtProvider;
 import net.tensory.rxjavatalk.repositories.DebtFeed;
 import net.tensory.rxjavatalk.repositories.DragonManager;
-import net.tensory.rxjavatalk.views.activityfeed.ActivityPresenter;
 
 import javax.inject.Singleton;
 
@@ -41,12 +40,6 @@ public class AppModule {
     @Singleton
     public DebtFeed provideDebtFeed() {
         return new DebtFeed();
-    }
-
-    @Provides
-    @Singleton
-    public ActivityPresenter provideActivityPresenter(BattleProvider battleProvider, DebtProvider debtProvider) {
-        return new ActivityPresenter(battleProvider, debtProvider);
     }
 
     @Provides
