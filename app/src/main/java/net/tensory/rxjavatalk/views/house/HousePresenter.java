@@ -14,47 +14,33 @@ import net.tensory.rxjavatalk.providers.DebtProvider;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
-import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.BehaviorSubject;
 
-public class HousePresenter extends ViewModel {
+class HousePresenter extends ViewModel {
 
     private final House house;
-    private final BattleProvider battleProvider;
     private final DebtProvider debtProvider;
     private final CreditRatingProvider creditRatingProvider;
-
-    private final BehaviorSubject<Double> ratingsSubject = BehaviorSubject.create();
-
-    private final BehaviorSubject<Double> debtSubject = BehaviorSubject.create();
 
     private final BehaviorSubject<Integer> soldiersSubject = BehaviorSubject.create();
 
     private final BehaviorSubject<Integer> dragonsSubject = BehaviorSubject.create();
 
-    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private final Disposable disposable;
 
     HousePresenter(House house,
                    BattleProvider battleProvider,
                    DebtProvider debtProvider,
                    CreditRatingProvider creditRatingProvider) {
         this.house = house;
-        this.battleProvider = battleProvider;
         this.debtProvider = debtProvider;
         this.creditRatingProvider = creditRatingProvider;
 
-        subscribeToBattles();
-
-        subscribeToDebtFeed();
-
-        subscribeToCreditRating();
-    }
-
-    private void subscribeToBattles() {
-        compositeDisposable.add(battleProvider.observeBattles()
-                                              .filter(this::wereWeInTheBattle)
-                                              .map(this::getHouseBattleResult)
-                                              .subscribe(this::updateFromBattles));
+        disposable = battleProvider.observeBattles()
+                                   .filter(this::wereWeInTheBattle)
+                                   .map(this::getHouseBattleResult)
+                                   .subscribe(this::updateFromBattles);
     }
 
     private boolean wereWeInTheBattle(Battle battle) {
@@ -81,36 +67,26 @@ public class HousePresenter extends ViewModel {
         }
     }
 
-    private void subscribeToDebtFeed() {
-        compositeDisposable.add(debtProvider.observeDebt(house)
-                                            .subscribe(debtSubject::onNext));
-    }
-
-    private void subscribeToCreditRating() {
-        compositeDisposable.add(creditRatingProvider.observeCreditRating(house)
-                                                    .subscribe(ratingsSubject::onNext));
-    }
-
-    public Observable<Double> observeRating() {
-        return ratingsSubject.toFlowable(BackpressureStrategy.LATEST).toObservable();
-    }
-
-    public Observable<Double> observeDebt() {
-        return debtSubject.toFlowable(BackpressureStrategy.LATEST).toObservable();
-    }
-
-    public Observable<Integer> observeSoldiers() {
+    Observable<Integer> observeSoldiers() {
         return soldiersSubject.toFlowable(BackpressureStrategy.LATEST).toObservable();
     }
 
-    public Observable<Integer> observeDragons() {
+    Observable<Integer> observeDragons() {
         return dragonsSubject.toFlowable(BackpressureStrategy.LATEST).toObservable();
+    }
+
+    Observable<Double> observeRating() {
+        return creditRatingProvider.observeCreditRating(house);
+    }
+
+    Observable<Double> observeDebt() {
+        return debtProvider.observeDebt(house);
     }
 
     @Override
     protected void onCleared() {
+        disposable.dispose();
         super.onCleared();
-        compositeDisposable.dispose();
     }
 
     Drawable getShield(final Context context) {
