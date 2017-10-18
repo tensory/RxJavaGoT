@@ -12,35 +12,41 @@ import net.tensory.rxjavatalk.providers.BattleProvider;
 import net.tensory.rxjavatalk.providers.CreditRatingProvider;
 import net.tensory.rxjavatalk.providers.DebtProvider;
 
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.subjects.BehaviorSubject;
 
 class HousePresenter extends ViewModel {
 
     private final House house;
+    private final BattleProvider battleProvider;
     private final DebtProvider debtProvider;
     private final CreditRatingProvider creditRatingProvider;
-
-    private final BehaviorSubject<Integer> soldiersSubject = BehaviorSubject.create();
-
-    private final BehaviorSubject<Integer> dragonsSubject = BehaviorSubject.create();
-
-    private final Disposable disposable;
 
     HousePresenter(House house,
                    BattleProvider battleProvider,
                    DebtProvider debtProvider,
                    CreditRatingProvider creditRatingProvider) {
         this.house = house;
+        this.battleProvider = battleProvider;
         this.debtProvider = debtProvider;
         this.creditRatingProvider = creditRatingProvider;
+    }
 
-        disposable = battleProvider.observeBattles()
-                                   .filter(this::wereWeInTheBattle)
-                                   .map(this::getHouseBattleResult)
-                                   .subscribe(this::updateFromBattles);
+    Observable<Integer> observeSoldiers() {
+        return observeBattleResult()
+                .map(HouseBattleResult::getCurrentArmySize)
+                .distinctUntilChanged();
+    }
+
+    Observable<Integer> observeDragons() {
+        return observeBattleResult()
+                .map(HouseBattleResult::getCurrentDragonCount)
+                .distinctUntilChanged();
+    }
+
+    private Observable<HouseBattleResult> observeBattleResult() {
+        return battleProvider.observeBattles()
+                             .filter(this::wereWeInTheBattle)
+                             .map(this::getHouseBattleResult);
     }
 
     private boolean wereWeInTheBattle(Battle battle) {
@@ -52,41 +58,12 @@ class HousePresenter extends ViewModel {
         return isWinningHouse ? battle.getWinner() : battle.getLoser();
     }
 
-    private void updateFromBattles(HouseBattleResult houseBattleResult) {
-        emitOnChange(soldiersSubject, houseBattleResult.getCurrentArmySize());
-
-        emitOnChange(dragonsSubject, houseBattleResult.getCurrentDragonCount());
-    }
-
-    private void emitOnChange(BehaviorSubject<Integer> behaviorSubject, int currentCount) {
-        Integer value = behaviorSubject.getValue();
-        final boolean hasChanged = value == null || !value.equals(currentCount);
-
-        if (hasChanged) {
-            behaviorSubject.onNext(currentCount);
-        }
-    }
-
-    Observable<Integer> observeSoldiers() {
-        return soldiersSubject.toFlowable(BackpressureStrategy.LATEST).toObservable();
-    }
-
-    Observable<Integer> observeDragons() {
-        return dragonsSubject.toFlowable(BackpressureStrategy.LATEST).toObservable();
-    }
-
     Observable<Double> observeRating() {
         return creditRatingProvider.observeCreditRating(house);
     }
 
     Observable<Double> observeDebt() {
         return debtProvider.observeDebt(house);
-    }
-
-    @Override
-    protected void onCleared() {
-        disposable.dispose();
-        super.onCleared();
     }
 
     Drawable getShield(final Context context) {

@@ -22,6 +22,7 @@ import net.tensory.rxjavatalk.injection.AppComponent;
 import net.tensory.rxjavatalk.models.House;
 
 import java.text.NumberFormat;
+import java.util.Locale;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -45,6 +46,7 @@ public class HouseFragment extends Fragment {
     private House house;
 
     private NumberFormat doubleFormat = NumberFormat.getNumberInstance();
+    private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,6 +65,8 @@ public class HouseFragment extends Fragment {
 
         doubleFormat.setMaximumFractionDigits(2);
         doubleFormat.setMinimumFractionDigits(2);
+
+        currencyFormat.setMaximumFractionDigits(0);
     }
 
     @Override
@@ -98,7 +102,7 @@ public class HouseFragment extends Fragment {
         compositeDisposable.add(presenter.observeDebt()
                                          .map(debt -> {
                                              if (debt > 0) {
-                                                 return doubleFormat.format(debt);
+                                                 return currencyFormat.format(debt);
                                              } else {
                                                  return getString(R.string.en_dash);
                                              }

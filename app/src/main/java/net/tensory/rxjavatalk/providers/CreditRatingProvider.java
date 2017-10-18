@@ -4,36 +4,29 @@ import net.tensory.rxjavatalk.models.Battle;
 import net.tensory.rxjavatalk.models.House;
 import net.tensory.rxjavatalk.models.HouseBattleResult;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
-import io.reactivex.subjects.BehaviorSubject;
 
 public class CreditRatingProvider {
 
     private static final Double MAX_DEBT_GOLD = 100000.0;
 
-    private Map<House, BehaviorSubject<Double>> ratingsSubjects = new HashMap<>();
+    private BattleProvider battleProvider;
+    private DebtProvider debtProvider;
 
     public CreditRatingProvider(BattleProvider battleProvider, DebtProvider debtProvider) {
         setupSubscription(battleProvider, debtProvider);
     }
 
-    public Observable<Double> observeCreditRating(House house) {
-        return ratingsSubjects.get(house).toFlowable(BackpressureStrategy.LATEST).toObservable();
+    private void setupSubscription(BattleProvider battleProvider, DebtProvider debtProvider) {
+        this.battleProvider = battleProvider;
+        this.debtProvider = debtProvider;
     }
 
-    private void setupSubscription(BattleProvider battleProvider, DebtProvider debtProvider) {
-        for (House house : House.values()) {
-            final BehaviorSubject<Double> behaviorSubject = BehaviorSubject.create();
-            ratingsSubjects.put(house, behaviorSubject);
-
-            Observable.combineLatest(
-                    debtProvider.observeDebt(house), observeAssetRating(house, battleProvider), this::calculateCreditRating)
-                      .subscribe(behaviorSubject::onNext);
-        }
+    public Observable<Double> observeCreditRating(House house) {
+        return Observable.combineLatest(
+                debtProvider.observeDebt(house),
+                observeAssetRating(house, battleProvider),
+                this::calculateCreditRating);
     }
 
     private Observable<Double> observeAssetRating(House house, BattleProvider battleProvider) {
