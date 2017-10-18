@@ -37,12 +37,12 @@ class HousePresenter extends ViewModel {
         return Observable.never();
     }
 
-     Observable<Double> observeRating() {
-        return creditRatingProvider.observeCreditRating(house);
+    Observable<Double> observeRating() {
+        return Observable.never();
     }
 
-    Observable<Double> observeDebt() {
-        return debtProvider.observeDebt(house);
+    public Observable<Double> observeDebt() {
+        return Observable.never();
     }
 
     Drawable getShield(final Context context) {
