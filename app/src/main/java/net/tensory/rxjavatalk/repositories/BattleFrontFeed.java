@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
 
 public class BattleFrontFeed {
     private static final int EMIT_RATE_SECONDS = 16;
@@ -23,27 +24,27 @@ public class BattleFrontFeed {
 
     private final DragonManager dragonManager;
 
-    private BehaviorSubject<Battle> battleSubject = BehaviorSubject.create();
+    private Subject<Object> battleSubject = BehaviorSubject.create().toSerialized();
 
     public BattleFrontFeed(Front front, DragonManager dragonManager) {
         this.dragonManager = dragonManager;
 
         if (front == Front.SOUTHERN) {
             Observable.just(new Battle(front, generateBattleResults()))
-                      .delay(EMIT_RATE_SECONDS / 2, TimeUnit.SECONDS)
-                      .subscribe(battle -> battleSubject.onNext(battle));
+                    .delay(EMIT_RATE_SECONDS / 2, TimeUnit.SECONDS)
+                    .subscribe(battleSubject::onNext);
         } else {
             battleSubject.onNext(new Battle(front, generateBattleResults()));
         }
 
         Observable<Battle> observable = Observable.interval(EMIT_RATE_SECONDS, TimeUnit.SECONDS)
-                                                  .map(timeInterval -> new Battle(front, generateBattleResults()));
+                .map(timeInterval -> new Battle(front, generateBattleResults()));
 
         if (front == Front.SOUTHERN) {
             observable = observable.delay(EMIT_RATE_SECONDS / 2, TimeUnit.SECONDS);
         }
 
-        observable.subscribe(battle -> battleSubject.onNext(battle));
+        observable.subscribe(battleSubject::onNext);
     }
 
     /**
@@ -52,7 +53,7 @@ public class BattleFrontFeed {
      * @return hot Observable
      */
     public Observable<Battle> observeBattles() {
-        return battleSubject;
+        return battleSubject.cast(Battle.class);
     }
 
     private Pair<HouseBattleResult, HouseBattleResult> generateBattleResults() {
